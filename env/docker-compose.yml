@@ -12,7 +12,7 @@ services:
     ports:
       - "${MYSQL_PORT_OUT}:3306"
     volumes:
-      - "../../config/mysql/conf:/etc/mysql/conf.d"
+      - "./config/mysql/conf:/etc/mysql/conf.d"
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       timeout: 20s

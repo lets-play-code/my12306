@@ -20,7 +20,7 @@ apply plugin: 'idea'
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2020.0.2"
-        mavenBom "com.github.leeonky:java-TD-tools-dependencies:0.0.8"
+        mavenBom "com.github.leeonky:java-TD-tools-dependencies:0.0.9"
     }
 }
 
@@ -32,13 +32,14 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor 'org.projectlombok:lombok:1.18.18'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.18'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.projectlombok:lombok:1.18.18'
+    implementation 'org.projectlombok:lombok:1.18.20'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'mysql:mysql-connector-java:8.0.13'
+    implementation 'org.flywaydb:flyway-core:5.2.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
