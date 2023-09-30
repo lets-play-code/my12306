@@ -43,13 +43,18 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'com.vaadin.external.google', module: 'android-json'
+        exclude group: 'org.skyscreamer', module: 'jsonassert'
+    }
     testImplementation 'io.cucumber:cucumber-java:6.10.2'
     testImplementation 'io.cucumber:cucumber-spring:6.10.2'
     testImplementation 'org.assertj:assertj-core:3.19.0'
     testImplementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     testImplementation 'org.awaitility:awaitility:4.0.3'
-    testImplementation 'org.mock-server:mockserver-client-java:5.4.1'
+    testImplementation ('org.mock-server:mockserver-client-java:5.4.1') {
+        exclude group: 'org.skyscreamer', module: 'jsonassert'
+    }
     testImplementation 'com.github.leeonky:jfactory'
     testImplementation 'com.github.leeonky:DAL-java'
     testImplementation 'com.github.leeonky:jfactory-cucumber'

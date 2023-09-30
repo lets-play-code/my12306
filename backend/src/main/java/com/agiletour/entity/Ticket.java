@@ -23,13 +23,9 @@ public class Ticket {
     @JsonIgnore
     private Train train;
 
-//    public String getTrainName() {
-//        if (train != null) {
-//            return train.getName();
-//        } else {
-//            return "";
-//        }
-//    }
+    public String getTrainName() {
+        return train.getName();
+    }
 
     @Enumerated(EnumType.STRING)
     private Status status;
