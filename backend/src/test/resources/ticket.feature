@@ -13,3 +13,8 @@
     """
     code=200
     """
+    那么All data "车票" should be:
+    """
+    : | train.name |
+      | G102       |
+    """

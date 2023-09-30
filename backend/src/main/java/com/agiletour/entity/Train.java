@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +16,7 @@ public class Train {
     private long id;
 
     private String name;
+
+    @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
+    private List<Ticket> tickets = new ArrayList<>();
 }

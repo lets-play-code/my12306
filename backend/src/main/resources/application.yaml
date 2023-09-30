@@ -19,3 +19,6 @@ spring:
       out-of-order: false
       locations:
         - classpath:db/migration
+
+server:
+  port: 8080
