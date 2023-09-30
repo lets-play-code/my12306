@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS `train` (
 
 CREATE TABLE IF NOT EXISTS `ticket` (
   `id` serial primary key,
-   `train_id` int NOT NULL
+   `train_id` int NOT NULL,
+   `status` varchar(50) NOT NULL
 );

@@ -21,4 +21,10 @@ public class Ticket {
     @ManyToOne
     private Train train;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    public enum Status {
+        AVAILABLE, SOLD
+    }
 }

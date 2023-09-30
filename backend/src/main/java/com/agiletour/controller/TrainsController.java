@@ -18,7 +18,7 @@ public class TrainsController {
     @PostMapping("/trains/{trainId}/tickets")
     public void buyTicket(@PathVariable long trainId) {
         var train = trainRepo.findById(trainId);
-        train.getTickets().add(new Ticket().setTrain(train));
+        train.getTickets().forEach(ticket -> ticket.setStatus(Ticket.Status.SOLD));
         trainRepo.save(train);
     }
 

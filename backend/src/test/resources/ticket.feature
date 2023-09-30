@@ -2,9 +2,9 @@
 
 功能: 买火车票
   场景: 买全程票
-    假如存在"车次":
-      | name |
-      | G102 |
+    假如存在"车票":
+      | train.name | status    |
+      | G102       | AVAILABLE |
     当POST "/trains/1/tickets":
     """
     {}
@@ -15,6 +15,6 @@
     """
     那么All data "车票" should be:
     """
-    : | train.name |
-      | G102       |
+    : | status |
+      | SOLD   |
     """
