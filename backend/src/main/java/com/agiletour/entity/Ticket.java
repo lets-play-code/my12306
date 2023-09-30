@@ -1,5 +1,6 @@
 package com.agiletour.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,7 +20,16 @@ public class Ticket {
     private long id;
 
     @ManyToOne
+    @JsonIgnore
     private Train train;
+
+//    public String getTrainName() {
+//        if (train != null) {
+//            return train.getName();
+//        } else {
+//            return "";
+//        }
+//    }
 
     @Enumerated(EnumType.STRING)
     private Status status;
