@@ -20,7 +20,6 @@ apply plugin: 'idea'
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:2020.0.2"
-        mavenBom "com.github.leeonky:java-TD-tools-dependencies:0.0.9"
     }
 }
 
@@ -55,12 +54,12 @@ dependencies {
     testImplementation ('org.mock-server:mockserver-client-java:5.4.1') {
         exclude group: 'org.skyscreamer', module: 'jsonassert'
     }
-    testImplementation 'com.github.leeonky:jfactory'
-    testImplementation 'com.github.leeonky:DAL-java'
-    testImplementation 'com.github.leeonky:jfactory-cucumber'
-    testImplementation 'com.github.leeonky:jfactory-repo-jpa'
-    testImplementation 'com.github.leeonky:RESTful-cucumber'
-    testImplementation 'com.github.leeonky:DAL-extension-basic'
+    testImplementation 'com.github.leeonky:jfactory:0.3.20'
+    testImplementation 'com.github.leeonky:DAL-java:0.3.21'
+    testImplementation 'com.github.leeonky:jfactory-cucumber:0.1.24'
+    testImplementation 'com.github.leeonky:jfactory-repo-jpa:0.1.13'
+    testImplementation 'com.github.leeonky:RESTful-cucumber:0.0.18'
+    testImplementation 'com.github.leeonky:DAL-extension-basic:0.0.12'
 }
 
 test {
