@@ -1,8 +1,6 @@
 package com.agiletour.cucumber;
 
 import com.github.leeonky.cucumber.restful.RestfulStep;
-import com.github.leeonky.dal.Accessors;
-import com.github.leeonky.dal.Assertions;
 import io.cucumber.java.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +25,6 @@ public class ApplicationSteps {
     @Before
     public void initRestfulStep() {
          restfulStep.setBaseUrl("http://localhost:%d/api".formatted(port));
-         Assertions.dumpInput(false);
-         Accessors.dumpInput(false);
     }
 
     @Before
