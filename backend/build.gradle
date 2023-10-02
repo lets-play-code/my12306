@@ -65,3 +65,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+idea {
+    module {
+        downloadJavadoc = false
+        downloadSources = false
+    }
+}
