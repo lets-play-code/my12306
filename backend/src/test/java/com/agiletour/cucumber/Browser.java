@@ -53,6 +53,10 @@ public class Browser {
         page.click(String.format("button[data-testid='%s']:has-text('%s')", id, text));
     }
 
+    public void shouldHaveText(String text) {
+        page.locator("//*[contains(text(), '" + text + "')]").waitFor();
+    }
+
     public void input(String name, String value) {
         Locator locator = page.locator(String.format("[data-testid='%s']", name));
         locator.fill(value);
