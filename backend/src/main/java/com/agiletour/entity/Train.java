@@ -18,5 +18,5 @@ public class Train {
     private String name;
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Seat> seats = new ArrayList<>();
 }

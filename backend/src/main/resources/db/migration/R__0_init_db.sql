@@ -1,10 +1,19 @@
-CREATE TABLE IF NOT EXISTS `train` (
+DROP TABLE IF EXISTS `train`;
+CREATE TABLE `train` (
   `id` serial primary key,
    `name` varchar(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS `ticket` (
+DROP TABLE IF EXISTS `seat`;
+CREATE TABLE `seat` (
   `id` serial primary key,
    `train_id` int NOT NULL,
-   `status` varchar(50) NOT NULL
+   `name` varchar(255) NOT NULL
 );
+
+DROP TABLE IF EXISTS `ticket`;
+CREATE TABLE `ticket` (
+  `id` serial primary key,
+   `seat_id` int NOT NULL
+);
+

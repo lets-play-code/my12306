@@ -8,4 +8,6 @@ import java.util.List;
 public interface TicketRepo extends Repository<Ticket, Long> {
 
     List<Ticket> findAll();
+
+    void save(Ticket ticket);
 }
