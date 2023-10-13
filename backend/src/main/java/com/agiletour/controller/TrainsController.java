@@ -22,10 +22,10 @@ public class TrainsController {
     @PostMapping("/trains/{trainId}/tickets")
     public void buyTicket(@PathVariable long trainId) {
         var train = trainRepo.findById(trainId);
-        train.getSeats().stream().filter(seat -> {
-          return seat.getTicket() == null;
-        }).findFirst().ifPresent(seat -> {
-          ticketRepo.save(new Ticket().setSeat(seat));
+        train.getSeats().stream().filter(seat -> seat.getTicket() == null).findFirst().ifPresentOrElse(seat -> {
+            ticketRepo.save(new Ticket().setSeat(seat));
+        }, () -> {
+            throw new BadRequestException("票已卖完");
         });
     }
 
