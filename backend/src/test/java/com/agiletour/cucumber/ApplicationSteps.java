@@ -1,6 +1,7 @@
 package com.agiletour.cucumber;
 
 import com.github.leeonky.cucumber.restful.RestfulStep;
+import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.java.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,14 +23,20 @@ public class ApplicationSteps {
     @Value("${server.port}")
     private int port;
 
+    @Autowired
+    private JFactory jFactory;
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
+
     @Before
     public void initRestfulStep() {
-         restfulStep.setBaseUrl("http://localhost:%d/api".formatted(port));
+        restfulStep.setBaseUrl("http://localhost:%d/api".formatted(port));
     }
 
     @Before
     public void cleanDb() {
         asList("train", "ticket", "seat").forEach(this::clearTable);
+        jFactory.getDataRepository().clear();
     }
 
     @Transactional
@@ -41,9 +48,6 @@ public class ApplicationSteps {
             entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
         });
     }
-
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
 
     public void executeDB(Consumer<EntityManager> consumer) {
         EntityManager manager = entityManagerFactory.createEntityManager();

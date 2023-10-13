@@ -1,13 +1,13 @@
 package com.agiletour.controller;
 
 import com.agiletour.entity.Ticket;
+import com.agiletour.entity.Train;
 import com.agiletour.repo.TicketRepo;
 import com.agiletour.repo.TrainRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -27,6 +27,11 @@ public class TrainsController {
         }, () -> {
             throw new BadRequestException("票已卖完");
         });
+    }
+
+    @GetMapping("/trains")
+    public List<Train> queryTrains() {
+        return trainRepo.findAll();
     }
 
 }

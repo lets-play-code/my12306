@@ -1,5 +1,6 @@
 package com.agiletour.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +19,6 @@ public class Train {
     private String name;
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Seat> seats = new ArrayList<>();
 }

@@ -68,18 +68,18 @@
       | 2D4       |
     """
 
-#  场景: 显示所有车票
-#    假如存在"车票":
-#      | train.name | status    |
-#      | G102       | AVAILABLE |
-#      | G103       | AVAILABLE |
-#    当GET "/tickets"
-#    那么response should be:
-#    """
-#    : {
-#      code=200
-#      body.json= | trainName  | status    | id |
-#                 | G102       | AVAILABLE | *  |
-#                 | G103       | AVAILABLE | *  |
-#    }
-#    """
+  场景: 显示所有车次
+    假如存在"车次":
+      | name |
+      | G102 |
+      | G103 |
+    当GET "/trains"
+    那么response should be:
+    """
+    : {
+      code=200
+      body.json= | name  | id |
+                 | G102  | *  |
+                 | G103  | *  |
+    }
+    """
