@@ -29,7 +29,7 @@ public class ApplicationSteps {
 
     @Before
     public void cleanDb() {
-        asList("train", "ticket").forEach(this::clearTable);
+        asList("train", "ticket", "seat").forEach(this::clearTable);
     }
 
     @Transactional

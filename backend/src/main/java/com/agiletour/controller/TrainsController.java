@@ -22,7 +22,11 @@ public class TrainsController {
     @PostMapping("/trains/{trainId}/tickets")
     public void buyTicket(@PathVariable long trainId) {
         var train = trainRepo.findById(trainId);
-        ticketRepo.save(new Ticket().setSeat(train.getSeats().get(0)));
+        train.getSeats().stream().filter(seat -> {
+          return seat.getTicket() == null;
+        }).findFirst().ifPresent(seat -> {
+          ticketRepo.save(new Ticket().setSeat(seat));
+        });
     }
 
 }
