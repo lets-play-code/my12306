@@ -26,11 +26,6 @@ export default defineConfig({
         '/api': {
           target: 'http://localhost:8080/',
           changeOrigin: true,
-        },
-        '/landing': {
-          target: 'https://indigo-hyacinth-1v1fht.mysxl.cn/',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/.*/, '')
         }
       }
     }

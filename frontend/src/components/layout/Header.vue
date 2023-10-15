@@ -13,25 +13,7 @@
                     <ul class="flex items-center gap-6 text-sm">
                         <li>
                             <a class="text-gray-500 transition hover:text-gray-500/75" href="/">
-                                About
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="text-gray-500 transition hover:text-gray-500/75" href="/product/index">
-                                Catalog
-                            </a>
-                        </li>
-
-                        <li v-if="currentUser">
-                            <a class="text-gray-500 transition hover:text-gray-500/75" href="/product/importer">
-                                Import
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="text-gray-500 transition hover:text-gray-500/75" href="/demo/index">
-                                Demo
+                                首页
                             </a>
                         </li>
                     </ul>
