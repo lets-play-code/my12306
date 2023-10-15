@@ -17,3 +17,10 @@ CREATE TABLE `ticket` (
    `seat_id` int NOT NULL
 );
 
+DROP TABLE IF EXISTS `stop`;
+CREATE TABLE `stop` (
+  `id` serial primary key,
+   `name` varchar(255) NOT NULL,
+   `order` int NOT NULL,
+   `train_id` int NOT NULL
+);

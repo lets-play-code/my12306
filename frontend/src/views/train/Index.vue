@@ -1,6 +1,6 @@
 <template>
     <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="name" label="车次" width="180"></el-table-column>
+        <el-table-column prop="description" label="车次" width="180"></el-table-column>
         <el-table-column label="" width="180">
             <template #default="{ row }">
                 <el-button type="primary" size="mini" @click="handleClick(row)">购票</el-button>
@@ -24,6 +24,9 @@ const handleClick = async (row: any) => {
 const fetch = async () => {
     try {
         tableData.value = await axios.get('/trains');
+        tableData.value.forEach((item: any) => {
+            item.description = item.name + ' ' + item.stops.at(0).name + '-' + item.stops.at(-1).name;
+        });
     } catch (e) {
         console.log(e);
     }

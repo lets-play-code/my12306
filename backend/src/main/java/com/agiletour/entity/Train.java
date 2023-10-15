@@ -21,4 +21,8 @@ public class Train {
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Seat> seats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
+    @OrderBy("`order`")
+    private List<Stop> stops = new ArrayList<>();
 }
