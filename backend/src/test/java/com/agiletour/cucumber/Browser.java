@@ -49,10 +49,6 @@ public class Browser {
         page.click(String.format("button:has-text('%s')", text));
     }
 
-    public void clickByText(String id, String text) {
-        page.click(String.format("button[data-testid='%s']:has-text('%s')", id, text));
-    }
-
     public void shouldHaveText(String text) {
         page.locator("//*[contains(text(), '" + text + "')]").waitFor();
     }
@@ -69,5 +65,11 @@ public class Browser {
 
     public Page getPage() {
         return this.page;
+    }
+
+    public void clickInRow(String rowText, String action) {
+        Locator locator = page.locator(String.format("//tr[td[normalize-space()='%s']]//button[normalize-space()='%s']",
+                rowText, action));
+        locator.click();
     }
 }
