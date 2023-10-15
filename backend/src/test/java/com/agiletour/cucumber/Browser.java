@@ -13,10 +13,6 @@ public class Browser {
     private Page page;
     private BrowserContext browserContext;
 
-    public void closeContext() {
-        browserContext.close();
-    }
-
     @PostConstruct
     public void createWebDriver() {
         playwright = Playwright.create();
@@ -32,12 +28,13 @@ public class Browser {
     }
 
     public void createContextAndPage() {
+        reset();
         browserContext = browser.newContext();
         page = browserContext.newPage();
     }
 
     public void reset() {
-        closeContext();
+        if (browserContext != null) browserContext.close();
     }
 
     public void launchByUrl(String path) {
@@ -68,7 +65,7 @@ public class Browser {
     }
 
     public void clickInRow(String rowText, String action) {
-        Locator locator = page.locator(String.format("//tr[td[normalize-space()='%s']]//button[normalize-space()='%s']",
+        Locator locator = page.locator(String.format("//tr[td[contains(normalize-space(),'%s')]]//button[normalize-space()='%s']",
                 rowText, action));
         locator.click();
     }
