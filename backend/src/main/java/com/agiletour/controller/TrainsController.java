@@ -23,7 +23,7 @@ public class TrainsController {
     public void buyTicket(@PathVariable long trainId) {
         var train = trainRepo.findById(trainId);
         train.getSeats().stream().filter(seat -> seat.getTicket() == null).findFirst().ifPresentOrElse(seat -> {
-            ticketRepo.save(new Ticket().setSeat(seat));
+            ticketRepo.save(new Ticket().setSeat(seat).setFrom(train.getStops().get(0)).setTo(train.getStops().get(1)));
         }, () -> {
             throw new BadRequestException("票已卖完");
         });

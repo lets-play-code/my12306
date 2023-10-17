@@ -23,4 +23,10 @@ public class Ticket {
 
     @OneToOne
     private Seat seat;
+
+    @OneToOne
+    private Stop from;
+
+    @OneToOne
+    private Stop to;
 }

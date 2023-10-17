@@ -14,7 +14,9 @@ CREATE TABLE `seat` (
 DROP TABLE IF EXISTS `ticket`;
 CREATE TABLE `ticket` (
   `id` serial primary key,
-   `seat_id` int NOT NULL
+   `seat_id` int NOT NULL,
+   `from_id` int NOT NULL,
+   `to_id` int NOT NULL
 );
 
 DROP TABLE IF EXISTS `stop`;

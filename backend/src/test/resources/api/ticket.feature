@@ -2,12 +2,19 @@
 功能: 买火车票
 
   场景: 买全程票
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 上海虹桥 |
     假如存在"座位":
       | name | train.name |
       | 2D4  | G102       |
     当POST "/trains/1/tickets":
     """
-    {}
+    {
+      "from": ${停靠站.name[北京南].id},
+      "to": ${停靠站.name[上海虹桥].id}
+    }
     """
     那么response should be:
     """
@@ -15,21 +22,28 @@
     """
     那么所有"车票"应为:
     """
-    : |  seat.name |
-      |  2D4       |
+    : |  seat.name | from.name | to.name |
+      |  2D4       | 北京南     | 上海虹桥 |
     """
 
   场景: 买全程票 - 找未卖出的座位
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 上海虹桥 |
     假如存在"座位":
       | name | train.name |
       | 2D4  | G102       |
       | 2D5  | G102       |
     假如存在"车票":
-      | seat.name |
-      | 2D4       |
+      | seat.name | from.train.name | from.name | to.train.name | to.name |
+      | 2D4       | G102            | 北京南       | G102          | 上海虹桥    |
     当POST "/trains/1/tickets":
     """
-    {}
+    {
+      "from": ${停靠站.name[北京南].id},
+      "to": ${停靠站.name[上海虹桥].id}
+    }
     """
     那么response should be:
     """
@@ -43,15 +57,22 @@
     """
 
   场景: 买全程票 - 座位已卖完
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 上海虹桥 |
     假如存在"座位":
       | name | train.name |
       | 2D4  | G102       |
     假如存在"车票":
-      | seat.name |
-      | 2D4       |
+      | seat.name | from.train.name | from.name | to.train.name | to.name |
+      | 2D4       | G102            | 北京南       | G102          | 上海虹桥    |
     当POST "/trains/1/tickets":
     """
-    {}
+    {
+      "from": ${停靠站.name[北京南].id},
+      "to": ${停靠站.name[上海虹桥].id}
+    }
     """
     那么response should be:
     """
