@@ -27,6 +27,6 @@
     当买火车票"G103"
     那么所有"车票"应为:
     """
-    : |  seat.name | seat.train.name |
-      |  2D4       | G103            |
+    : |  seat.name | seat.train.name | from.name | to.name |
+      |  2D4       | G103            | 上海虹桥   | 北京南   |
     """

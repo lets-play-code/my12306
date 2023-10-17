@@ -24,6 +24,7 @@ public class UiSteps {
     public void buyTicket(String trainNumber) {
         showTrains();
         browser.clickInRow(trainNumber, "购票");
+        browser.shouldHaveText("购票成功");
     }
 
     @那么("页面包含如下内容:")

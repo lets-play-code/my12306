@@ -20,10 +20,12 @@ public class TrainsController {
     private TicketRepo ticketRepo;
 
     @PostMapping("/trains/{trainId}/tickets")
-    public void buyTicket(@PathVariable long trainId) {
+    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo) {
         var train = trainRepo.findById(trainId);
         train.getSeats().stream().filter(seat -> seat.getTicket() == null).findFirst().ifPresentOrElse(seat -> {
-            ticketRepo.save(new Ticket().setSeat(seat).setFrom(train.getStops().get(0)).setTo(train.getStops().get(1)));
+            var from = train.findStop(fromAndTo.from);
+            var to = train.findStop(fromAndTo.to);
+            ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
         }, () -> {
             throw new BadRequestException("票已卖完");
         });
@@ -34,4 +36,7 @@ public class TrainsController {
         return trainRepo.findAll();
     }
 
+    public static class FromAndTo {
+        public int from, to;
+    }
 }

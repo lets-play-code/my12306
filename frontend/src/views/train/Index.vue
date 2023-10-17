@@ -11,11 +11,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import  axios from "@/api/index";
+import { showMessage } from "@/main";
+
 const tableData = ref([]);
 
 const handleClick = async (row: any) => {
     try {
-        const res = await axios.post('/trains/'+row.id+'/tickets', {});
+        const res = await axios.post('/trains/'+row.id+'/tickets', {
+          from: row.stops.at(0).id,
+          to: row.stops.at(-1).id
+        });
+        showMessage("购票成功");
     } catch (e) {
         console.log(e);
     }

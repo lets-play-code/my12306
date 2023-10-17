@@ -25,4 +25,8 @@ public class Train {
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @OrderBy("`order`")
     private List<Stop> stops = new ArrayList<>();
+
+    public Stop findStop(int id) {
+        return stops.stream().filter(stop -> stop.getId() == id).findFirst().get();
+    }
 }
