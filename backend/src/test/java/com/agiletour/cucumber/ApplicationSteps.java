@@ -4,13 +4,11 @@ import com.github.leeonky.cucumber.restful.RestfulStep;
 import com.github.leeonky.jfactory.JFactory;
 import io.cucumber.java.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
-import javax.transaction.Transactional;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
@@ -25,8 +23,10 @@ public class ApplicationSteps {
 
     @Autowired
     private JFactory jFactory;
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    @Qualifier("jFactoryEntityManager")
+    private EntityManager entityManager;
 
     @Before
     public void initRestfulStep() {
@@ -39,7 +39,12 @@ public class ApplicationSteps {
         jFactory.getDataRepository().clear();
     }
 
-    @Transactional
+    private EntityTransaction getCleanTransaction() {
+        EntityTransaction transaction = entityManager.getTransaction();
+        if (transaction.isActive()) transaction.rollback();
+        return transaction;
+    }
+
     public void clearTable(String tableName) {
         executeDB(entityManager -> {
             entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
@@ -50,12 +55,11 @@ public class ApplicationSteps {
     }
 
     public void executeDB(Consumer<EntityManager> consumer) {
-        EntityManager manager = entityManagerFactory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
+        EntityTransaction transaction = entityManager.getTransaction();
+        if (transaction.isActive()) transaction.rollback();
         transaction.begin();
-        consumer.accept(manager);
+        consumer.accept(entityManager);
         transaction.commit();
-        manager.close();
     }
 
 }
