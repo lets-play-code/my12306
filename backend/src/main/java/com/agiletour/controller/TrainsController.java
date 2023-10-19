@@ -22,13 +22,14 @@ public class TrainsController {
     @PostMapping("/trains/{trainId}/tickets")
     public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo) {
         var train = trainRepo.findById(trainId);
-        train.getSeats().stream().filter(seat -> seat.getTicket() == null).findFirst().ifPresentOrElse(seat -> {
-            var from = train.findStop(fromAndTo.from);
-            var to = train.findStop(fromAndTo.to);
-            ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
-        }, () -> {
-            throw new BadRequestException("票已卖完");
-        });
+        train.getSeats().stream().filter(seat -> seat.isAvailable(fromAndTo.from, fromAndTo.to))
+                .findFirst().ifPresentOrElse(seat -> {
+                    var from = train.findStop(fromAndTo.from);
+                    var to = train.findStop(fromAndTo.to);
+                    ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
+                }, () -> {
+                    throw new BadRequestException("票已卖完");
+                });
     }
 
     @GetMapping("/trains")
