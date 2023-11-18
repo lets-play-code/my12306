@@ -1,6 +1,24 @@
 # language: zh-CN
 功能: 买火车票
 
+  场景: 显示所有车次
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 2     | 上海虹桥 |
+      | G102       | 1     | 北京南  |
+      | G103       | 1     | 上海虹桥 |
+      | G103       | 2     | 北京南  |
+    当GET "/trains"
+    那么response should be:
+    """
+    : {
+      code=200
+      body.json= | id | name | stops.name[]  |
+                 | *  | G102 | [北京南 上海虹桥] |
+                 | *  | G103 | [上海虹桥 北京南] |
+    }
+    """
+
   场景: 买全程票
     假如存在"停靠站":
       | train.name | order | name |
@@ -113,22 +131,4 @@
     """
     : |  seat.name | from.name | to.name |
       |  2D4       | 南京南     | 上海虹桥 |
-    """
-
-  场景: 显示所有车次
-    假如存在"停靠站":
-      | train.name | order | name |
-      | G102       | 2     | 上海虹桥 |
-      | G102       | 1     | 北京南  |
-      | G103       | 1     | 上海虹桥 |
-      | G103       | 2     | 北京南  |
-    当GET "/trains"
-    那么response should be:
-    """
-    : {
-      code=200
-      body.json= | id | name | stops.name[]  |
-                 | *  | G102 | [北京南 上海虹桥] |
-                 | *  | G103 | [上海虹桥 北京南] |
-    }
     """
