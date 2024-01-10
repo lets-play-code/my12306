@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Getter
@@ -20,7 +21,7 @@ public class Train {
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Seat> seats = new ArrayList<>();
+    private LinkedList<Seat> seats = new LinkedList<>();
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @OrderBy("`order`")
