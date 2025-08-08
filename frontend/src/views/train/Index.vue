@@ -23,6 +23,7 @@ const handleClick = async (row: any) => {
         });
         showMessage("购票成功");
     } catch (e) {
+        // Error message is handled globally by axios interceptor
         console.log(e);
     }
 };

@@ -8,7 +8,11 @@ import App from './App.vue'
 
 const errorMessage = ref('');
 export const showMessage = (message: string) => {
-  errorMessage.value = message;
+  // Reset first to ensure subsequent identical messages still trigger reactivity
+  errorMessage.value = '';
+  setTimeout(() => {
+    errorMessage.value = message;
+  }, 0);
 };
 
 const app = createApp(App)

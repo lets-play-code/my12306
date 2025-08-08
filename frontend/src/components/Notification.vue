@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue';
+import { ref, watch, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   message: {
@@ -25,14 +25,23 @@ const props = defineProps({
 });
 
 const visible = ref(false);
+let timer: number | undefined;
 
-watchEffect(() => {
-  if (props.message) {
-    visible.value = true;
-    setTimeout(() => {
-      visible.value = false;
-    }, props.duration);
-  }
+const show = () => {
+  visible.value = true;
+  if (timer) window.clearTimeout(timer);
+  timer = window.setTimeout(() => {
+    visible.value = false;
+    timer = undefined;
+  }, props.duration);
+};
+
+watch(() => props.message, (val) => {
+  if (val) show();
+});
+
+onBeforeUnmount(() => {
+  if (timer) window.clearTimeout(timer);
 });
 </script>
 

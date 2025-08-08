@@ -18,6 +18,11 @@ instance.interceptors.response.use(
         if (error.response?.status === 401) {
             authentication.clearToken();
             showMessage('You have been logged out. Please login again.');
+        } else if (error.response?.data?.message) {
+            // Surface backend error message such as "票已卖完"
+            showMessage(error.response.data.message);
+        } else if (error.message) {
+            showMessage(error.message);
         }
         return Promise.reject(error);
     }
