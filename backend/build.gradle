@@ -89,3 +89,8 @@ task cucumber(type: JavaExec) {
             '--glue', 'com.github.leeonky',
             'src/test/resources']
 }
+
+bootRun {
+    systemProperties = System.properties
+    environment 'SPRING_PROFILES_ACTIVE', System.getenv('SPRING_PROFILES_ACTIVE') ?: 'dev'
+}

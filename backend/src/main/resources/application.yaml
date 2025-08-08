@@ -14,14 +14,25 @@ spring:
 
   flyway:
     enabled: true
-    business:
-      clean-disabled: true
-      baseline-on-migrate: true
-      out-of-order: false
-      locations:
-        - classpath:db/migration
+  clean-disabled: true
+  baseline-on-migrate: true
+  out-of-order: false
+  locations: classpath:db/migration
 
 server:
   port: 8080
 
 #logging.level.root: TRACE
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  flyway:
+    enabled: true
+    # Nothing special here; our R__1_seed_demo_data.sql truncates and reseeds each startup
+    locations: classpath:db/migration
+  clean-disabled: false
+  baseline-on-migrate: true
+  out-of-order: false
