@@ -13,9 +13,28 @@
     """
     : {
       code=200
-      body.json= | id | name | stops.name[]  |
-                 | *  | G102 | [北京南 上海虹桥] |
-                 | *  | G103 | [上海虹桥 北京南] |
+      body.json= | id | name | stops.name[] | remainingTickets |
+                 | *  | G102 | [北京南 上海虹桥] | 0 |
+                 | *  | G103 | [上海虹桥 北京南] | 0 |
+    }
+    """
+
+  场景: 显示车次余票
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 上海虹桥 |
+    假如存在"座位":
+      | name | train.name |
+      | 2D4  | G102       |
+      | 2D5  | G102       |
+    当GET "/trains"
+    那么response should be:
+    """
+    : {
+      code=200
+      body.json= | id | name | stops.name[] | remainingTickets |
+                 | *  | G102 | [北京南 上海虹桥] | 2 |
     }
     """
 

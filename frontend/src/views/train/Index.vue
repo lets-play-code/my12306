@@ -5,6 +5,7 @@
         <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
         <el-table v-else :data="trains" style="width: 100%" class="border border-gray-200 rounded">
             <el-table-column prop="description" label="车次" width="180" class="font-medium"></el-table-column>
+            <el-table-column prop="remainingTickets" label="余票" width="120" class="text-center"></el-table-column>
             <el-table-column label="操作" width="180">
                 <template #default="{ row }">
                     <el-button type="primary" size="mini" @click="handleClick(row)" class="bg-blue-500 hover:bg-blue-600">购票</el-button>
