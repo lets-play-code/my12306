@@ -47,7 +47,8 @@ public class Browser {
     }
 
     public void shouldHaveText(String text) {
-        page.locator("//*[contains(text(), '" + text + "')]").waitFor();
+        // 使用 Playwright 的 getByText API，更现代的写法
+        page.getByText(text).waitFor();
     }
 
     public void input(String name, String value) {

@@ -38,6 +38,48 @@
     }
     """
 
+  场景: 按始发站和终点站查询车次
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 南京南  |
+      | G102       | 3     | 上海虹桥 |
+      | G103       | 1     | 上海虹桥 |
+      | G103       | 2     | 北京南  |
+      | G104       | 1     | 北京南  |
+      | G104       | 2     | 上海虹桥 |
+    假如存在"座位":
+      | name | train.name |
+      | 2D4  | G102       |
+      | 2D5  | G102       |
+      | 2D4  | G104       |
+    当GET "/trains?from=北京南&to=上海虹桥"
+    那么response should be:
+    """
+    : {
+      code=200
+      body.json= | id | name | stops.name[] | remainingTickets |
+                 | *  | G102 | [北京南 南京南 上海虹桥] | 2 |
+                 | *  | G104 | [北京南 上海虹桥] | 1 |
+    }
+    """
+
+  场景: 按始发站和终点站查询车次 - 无匹配车次
+    假如存在"停靠站":
+      | train.name | order | name |
+      | G102       | 1     | 北京南  |
+      | G102       | 2     | 上海虹桥 |
+      | G103       | 1     | 上海虹桥 |
+      | G103       | 2     | 南京南  |
+    当GET "/trains?from=北京南&to=南京南"
+    那么response should be:
+    """
+    : {
+      code=200
+      body.json= [] 
+    }
+    """
+
   Rule: 买票
     场景: 买全程票
       假如存在"停靠站":

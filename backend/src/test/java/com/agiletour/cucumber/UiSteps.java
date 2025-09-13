@@ -26,6 +26,14 @@ public class UiSteps {
         browser.clickInRow(trainNumber, "购票");
     }
 
+    @当("查询火车票从{string}到{string}")
+    public void queryTrainsByStations(String from, String to) {
+        browser.launchByUrl("/");
+        browser.input("from-station", from);
+        browser.input("to-station", to);
+        browser.clickByText("查询");
+    }
+
     @那么("页面包含如下内容:")
     public void shouldDisplayContents(DataTable dataTable) {
         dataTable.asList().forEach(text -> browser.shouldHaveText(text));
