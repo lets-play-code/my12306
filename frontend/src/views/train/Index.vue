@@ -29,8 +29,13 @@ const handleClick = async (row: any) => {
           to: row.stops.at(-1).id
         });
         showMessage("购票成功");
-    } catch (e) {
+    } catch (e: any) {
         console.log(e);
+        if (e.response && e.response.data && e.response.data.message) {
+            showMessage(e.response.data.message);
+        } else {
+            showMessage("购票失败，请稍后重试");
+        }
     }
 };
 

@@ -30,3 +30,17 @@
     : |  seat.name | seat.train.name | from.name | to.name |
       |  2D4       | G103            | 上海虹桥   | 北京南   |
     """
+
+  场景: 票卖完时显示错误信息
+    假如存在"停靠站":
+      | train.name | name |
+      | G104       | 北京南  |
+      | G104       | 上海虹桥 |
+    假如存在"座位":
+      | name | train.name |
+      | 2D4  | G104       |
+    假如存在"车票":
+      | seat.name | seat.train.name | from.name | to.name |
+      | 2D4       | G104            | 北京南     | 上海虹桥 |
+    当买火车票"G104"
+    那么显示错误信息"票已卖完"
