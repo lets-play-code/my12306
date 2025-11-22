@@ -62,6 +62,12 @@ const handleClick = async (row: any) => {
           to: row.stops.at(-1).id
         });
         showMessage("购票成功");
+        // 购票成功后刷新列表
+        if (fromStation.value || toStation.value) {
+            await handleQuery();
+        } else {
+            await fetchTrains();
+        }
     } catch (e: any) {
         console.log(e);
         if (e.response && e.response.data && e.response.data.message) {
