@@ -80,4 +80,4 @@ services:
       - mock-server
       - phpmyadmin
       - web-driver
-      - web-driver-video
+      #- web-driver-video

@@ -15,14 +15,13 @@ public class UiSteps {
         browser.createContextAndPage();
     }
 
-    @当("查询火车票")
-    public void showTrains() {
+    @当("打开火车票页面")
+    public void openTrainTicketPage() {
         browser.launchByUrl("/");
     }
 
     @当("买火车票{string}")
     public void buyTicket(String trainNumber) {
-        showTrains();
         browser.clickInRow(trainNumber, "购票");
     }
 
@@ -37,6 +36,11 @@ public class UiSteps {
     @那么("页面包含如下内容:")
     public void shouldDisplayContents(DataTable dataTable) {
         dataTable.asList().forEach(text -> browser.shouldHaveText(text));
+    }
+
+    @那么("页面不包含如下内容:")
+    public void shouldNotDisplayContents(DataTable dataTable) {
+        dataTable.asList().forEach(text -> browser.shouldNotHaveText(text));
     }
 
     @那么("显示错误信息{string}")

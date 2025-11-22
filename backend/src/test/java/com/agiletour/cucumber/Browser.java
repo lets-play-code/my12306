@@ -38,7 +38,7 @@ public class Browser {
     }
 
     public void launchByUrl(String path) {
-        String url = "http://localhost:9090" + path;
+        String url = "http://localhost:9990" + path;
         page.navigate(url);
     }
 
@@ -49,6 +49,14 @@ public class Browser {
     public void shouldHaveText(String text) {
         // 使用 Playwright 的 getByText API，更现代的写法
         page.getByText(text).waitFor();
+    }
+
+    public void shouldNotHaveText(String text) {
+        // 检查页面中不存在指定文本
+        Locator locator = page.getByText(text);
+        if (locator.count() > 0) {
+            throw new AssertionError("页面包含不应该存在的文本: " + text);
+        }
     }
 
     public void input(String name, String value) {

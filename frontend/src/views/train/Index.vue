@@ -63,11 +63,7 @@ const handleClick = async (row: any) => {
         });
         showMessage("购票成功");
         // 购票成功后刷新列表
-        if (fromStation.value || toStation.value) {
-            await handleQuery();
-        } else {
-            await fetchTrains();
-        }
+        await handleQuery();
     } catch (e: any) {
         console.log(e);
         if (e.response && e.response.data && e.response.data.message) {
@@ -75,25 +71,6 @@ const handleClick = async (row: any) => {
         } else {
             showMessage("购票失败，请稍后重试");
         }
-    }
-};
-
-const fetchTrains = async () => {
-    loading.value = true;
-    error.value = '';
-    try {
-        const data = await axios.get('/trains') as any;
-        trains.value = data || [];
-        if (Array.isArray(trains.value)) {
-            trains.value.forEach((item: any) => {
-                item.description = item.name + ' ' + item.stops.at(0).name + '-' + item.stops.at(-1).name;
-            });
-        }
-    } catch (e: any) {
-        error.value = '获取火车列表失败，请稍后重试';
-        console.log(e);
-    } finally {
-        loading.value = false;
     }
 };
 
@@ -126,6 +103,4 @@ const handleClear = () => {
     toStation.value = '';
     trains.value = [];
 };
-
-onMounted(fetchTrains);
 </script>

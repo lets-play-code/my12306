@@ -18,7 +18,7 @@ export default defineConfig({
         outDir: path.resolve(dirname, './build/dist/public')
     },
     server: {
-      port: 9090,
+      port: 9990,
       hmr: {
         overlay: true
       },
