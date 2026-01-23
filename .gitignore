@@ -30,3 +30,5 @@ out
 # Selenium video
 env/videos
 
+# asdf
+.tool-versions

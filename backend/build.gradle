@@ -27,6 +27,9 @@ group 'org.agiletour'
 version '1.0-SNAPSHOT'
 
 repositories {
+    maven {
+        url "https://maven.aliyun.com/repository/public"
+    }
     mavenCentral()
 }
 
@@ -84,12 +87,12 @@ task cucumber(type: JavaExec) {
     dependsOn assemble, testClasses, test
     main = "io.cucumber.core.cli.Main"
     classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+    environment "PLAYWRIGHT_DOWNLOAD_HOST", "https://npmmirror.com/mirrors/playwright"
 
-    def featureFile = System.getProperty('cucumber.feature') ?: 'src/test/resources'
     args = ['--plugin', 'pretty',
             '--glue', 'com.agiletour.cucumber',
             '--glue', 'com.github.leeonky',
-            featureFile]
+            project.hasProperty('file') ? project.file : 'src/test/resources']
 }
 
 bootRun {
