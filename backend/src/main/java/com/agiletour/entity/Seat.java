@@ -27,9 +27,9 @@ public class Seat {
     private List<Ticket> tickets;
 
     public boolean isAvailable(int fromId, int toId) {
-        List<Ticket> ticket = getTickets();
-        if (ticket.isEmpty()) return true;
-        return !isOverlap(ticket.get(0), fromId, toId);
+        List<Ticket> tickets = getTickets();
+        if (tickets.isEmpty()) return true;
+        return tickets.stream().noneMatch(ticket -> isOverlap(ticket, fromId, toId));
     }
 
     private boolean isOverlap(Ticket ticket, int fromId, int toId) {

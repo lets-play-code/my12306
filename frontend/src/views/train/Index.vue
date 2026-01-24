@@ -57,9 +57,31 @@ const toStation = ref('');
 
 const handleClick = async (row: any) => {
     try {
+        // 如果用户指定了始发站和终点站，使用用户查询的站点；否则使用全程
+        let fromStopId, toStopId;
+        
+        if (fromStation.value && toStation.value) {
+            // 查找用户指定站点对应的 stop ID
+            const fromStop = row.stops.find((stop: any) => stop.name === fromStation.value);
+            const toStop = row.stops.find((stop: any) => stop.name === toStation.value);
+            
+            if (fromStop && toStop) {
+                fromStopId = fromStop.id;
+                toStopId = toStop.id;
+            } else {
+                // 如果找不到对应站点，回退到全程
+                fromStopId = row.stops.at(0).id;
+                toStopId = row.stops.at(-1).id;
+            }
+        } else {
+            // 没有指定站点，购买全程票
+            fromStopId = row.stops.at(0).id;
+            toStopId = row.stops.at(-1).id;
+        }
+        
         const res = await axios.post('/trains/'+row.id+'/tickets', {
-          from: row.stops.at(0).id,
-          to: row.stops.at(-1).id
+          from: fromStopId,
+          to: toStopId
         });
         showMessage("购票成功");
         // 购票成功后刷新列表
