@@ -81,6 +81,7 @@
     """
 
   Rule: 买票
+
     场景: 买全程票
       假如存在"停靠站":
         | train.name | order | name |
