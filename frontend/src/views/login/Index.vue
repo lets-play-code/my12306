@@ -59,7 +59,7 @@ const router = useRouter();
 const submitForm = async () => {
     try {
         await authentication.login(loginUser.value);
-        router.push('/product/index');
+        router.push('/');
     } catch (error) {
         showMessage((error as Error).message);
     }

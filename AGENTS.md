@@ -20,16 +20,46 @@
 - **测试**: Vitest with Testing Library
 - **开发服务器**: 端口 9090 (代理 API 调用到后端 8080)
 
+## 🚀 Agent 快速执行策略
+
+### 测试执行原则
+
+**⚡️ 重要：Agent 应该默认运行单个测试，而不是所有测试，以提升效率**
+
+1. **默认行为**：优先运行单个相关测试文件，而非整个测试套件
+2. **测试文件定位**：
+   - UI 测试：`src/test/resources/ui/ticket.feature`
+   - API 测试：`src/test/resources/api/ticket.feature`
+3. **调试需要**：使用 `-Dheadless=false` 显示浏览器窗口
+4. **完整测试**：仅在明确要求或验证整体功能时运行全部测试
+
 ## 开发命令
 
 ### 后端
 ```bash
 cd backend
 ./gradlew build          # 构建应用程序
-./gradlew test           # 运行单元测试
-./gradlew cucumber       # 运行 Cucumber 验收测试
+
+# ✅ 推荐：运行单个 UI 测试文件（默认 headless）
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature
+
+# ✅ 推荐：运行单个 API 测试文件（默认 headless）
+./gradlew cucumber -Pfile=src/test/resources/api/ticket.feature
+
+# 🔍 调试：显示浏览器窗口进行可视化调试
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature -Dheadless=false
+
+# 🎯 精确：运行单个 feature 文件中的特定行场景
+# 例如：运行 ticket.feature 文件第 10 行开始的场景
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature:10
+
+# ⚠️ 不推荐：运行所有测试（仅在全面验证时使用）
+./gradlew cucumber
+
 ./gradlew bootRun        # 运行应用程序
 ```
+**💡 提示：UI测试共用相同的前端实例，而同一个前端连接的backend同时只能是bootRun 和测试中的一个。因此无法在启动bootRun的同时执行测试**
+
 
 ### 前端
 ```bash
@@ -42,7 +72,7 @@ pnpm run lint            # 运行 ESLint
 pnpm run format          # 使用 Prettier 格式化代码
 ```
 
-## 用 Docker 启动依赖环境（MySQL/MockServer/PhpMyAdmin/WebDriver）
+## 用 Docker 启动依赖环境（MySQL/MockServer/PhpMyAdmin）
 
 Docker 编排文件位于 `env/docker-compose.yml`，用于本地快速启动项目依赖（数据库、Mock、浏览器自动化等）。
 
@@ -63,20 +93,13 @@ Docker 编排文件位于 `env/docker-compose.yml`，用于本地快速启动项
 - 在项目根目录运行（推荐，显式指定 env 文件）：
 
 ```bash
-docker compose --env-file env/.env -f env/docker-compose.yml up -d mysql mock-server phpmyadmin web-driver
-# 如为 Apple Silicon（M1/M2/M3），使用 ARM 版本 WebDriver：
-docker compose --env-file env/.env -f env/docker-compose.yml up -d mysql mock-server phpmyadmin web-driver-arm
+docker compose --env-file env/.env -f env/docker-compose.yml up -d mysql mock-server phpmyadmin
 ```
 
 或进入 `env/` 目录后直接运行（此时会自动读取 `env/.env`）：
 ```bash
 cd env
-docker compose up -d mysql mock-server phpmyadmin web-driver
-```
-
-可选：需要录屏时再启动视频容器：
-```bash
-docker compose --env-file env/.env -f env/docker-compose.yml up -d web-driver-video
+docker compose up -d mysql mock-server phpmyadmin
 ```
 
 查看状态与日志：
@@ -107,7 +130,6 @@ macOS/Linux：编辑 `/etc/hosts`；Windows：编辑 `C:\Windows\System32\driver
 	- Server/Host：`db`（容器内别名）或 `127.0.0.1:23306`
 	- 用户名/密码：`admin / 123456`
 - MockServer：`http://localhost:${MOCK_SERVER_PORT_OUT}`（默认 1080）
-- Selenium VNC：`http://localhost:7900/?autoconnect=1&resize=scale`（无密码）
 
 ### 6) 与后端/前端联动
 - 保证 Docker 中 MySQL 已启动且健康（`docker compose ps` HEALTHY）
@@ -123,7 +145,7 @@ macOS/Linux：编辑 `/etc/hosts`；Windows：编辑 `C:\Windows\System32\driver
 	pnpm run dev
 	```
 
-> 注意：`env/docker-compose.yml` 同时包含 `web-driver`（x86_64）与 `web-driver-arm`（ARM）两个服务，按你的机器架构二选一启动即可。
+> 注意：docker-compose.yml 中包含 `web-driver` 和 `web-driver-arm` 服务，这些是历史遗留配置。当前 UI 测试使用 Playwright 直接在本机启动浏览器，不需要启动这些服务。
 
 ## 核心组件
 
@@ -161,6 +183,76 @@ macOS/Linux：编辑 `/etc/hosts`；Windows：编辑 `C:\Windows\System32\driver
 - Vitest 单元测试
 - Testing Library Vue 组件测试
 - 测试工具在 `tests/components/test-utils.ts`
+
+## UI 测试 Headless 模式配置
+
+**默认行为**：UI 测试默认使用 headless 模式运行，避免弹出浏览器窗口干扰工作。
+
+### 快速使用
+
+#### ✅ 运行单个 UI 测试（默认 headless）
+```bash
+cd backend
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature
+```
+
+#### 🔍 调试模式（显示浏览器窗口）
+```bash
+# 运行特定测试并显示浏览器窗口
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature -Dheadless=false
+
+# 运行特定行开始的场景
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature:10 -Dheadless=false
+```
+
+### 完整配置说明
+
+#### 方式 1：通过 Gradle 属性设置（推荐）
+```bash
+# 明确指定 headless 模式
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature -Dheadless=true
+
+# 或设置为环境变量
+export HEADLESS=true
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature
+```
+
+#### 方式 2：设置环境变量
+```bash
+export HEADLESS=true
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature
+```
+
+#### 方式 3：在测试代码中设置
+测试代码默认读取系统属性：
+```java
+String headless = System.getProperty("headless", "true"); // 默认 true
+```
+
+### 浏览器显示控制
+
+- **Headless 模式** (`true`): 无头运行，不弹出浏览器窗口，适合 CI/CD 和后台测试
+- **有头模式** (`false`): 显示浏览器窗口，便于调试和可视化测试过程
+
+### 💡 调试建议
+
+如需在有头模式下调试特定测试，建议：
+
+1. **运行单个测试文件**：使用 `-Pfile` 指定特定文件
+2. **显示浏览器窗口**：添加 `-Dheadless=false`
+3. **定位特定场景**：使用 `:行号` 运行特定行开始的场景
+
+示例：
+```bash
+# 调试 UI 测试
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature -Dheadless=false
+
+# 调试 API 测试
+./gradlew cucumber -Pfile=src/test/resources/api/ticket.feature -Dheadless=false
+
+# 精确调试特定场景
+./gradlew cucumber -Pfile=src/test/resources/ui/ticket.feature:15 -Dheadless=false
+```
 
 ## 开发工作流
 

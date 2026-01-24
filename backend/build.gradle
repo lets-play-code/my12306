@@ -90,6 +90,9 @@ task cucumber(type: JavaExec) {
     classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
     environment "PLAYWRIGHT_DOWNLOAD_HOST", "https://npmmirror.com/mirrors/playwright"
 
+    // 透传所有系统属性到 JVM
+    systemProperties = System.getProperties()
+
     // 通过 -Pfile=src/test/resources/features/xxx.feature 指定运行某个 feature 文件。 -Pfile=src/test/resources/features/xxx.feature:yy 指定运行 feature 文件中yy行开始的场景
     //不指定则运行整个 features 目录
     args = ['--plugin', 'pretty',

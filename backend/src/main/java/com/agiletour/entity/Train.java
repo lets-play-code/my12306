@@ -27,25 +27,8 @@ public class Train {
     @OrderBy("`order`")
     private List<Stop> stops = new ArrayList<>();
 
-    @Transient
-    private Integer queryFromStopId;
-
-    @Transient
-    private Integer queryToStopId;
-
     public Stop findStop(int id) {
         return stops.stream().filter(stop -> stop.getId() == id).findFirst().get();
-    }
-
-    @JsonProperty
-    public int getRemainingTickets() {
-        if (stops.isEmpty()) return 0;
-        
-        // 如果设置了查询参数，使用查询参数计算余票
-        long fromId = (queryFromStopId != null) ? queryFromStopId : stops.get(0).getId();
-        long toId = (queryToStopId != null) ? queryToStopId : stops.get(stops.size() - 1).getId();
-        
-        return (int) seats.stream().filter(seat -> seat.isAvailable((int) fromId, (int) toId)).count();
     }
 
     public int getRemainingTickets(int fromStopId, int toStopId) {

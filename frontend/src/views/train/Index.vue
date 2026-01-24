@@ -109,7 +109,20 @@ const handleQuery = async () => {
         trains.value = data || [];
         if (Array.isArray(trains.value)) {
             trains.value.forEach((item: any) => {
-                item.description = item.name + ' ' + item.stops.at(0).name + '-' + item.stops.at(-1).name;
+                // If user specified from/to stations, display the queried route
+                if (fromStation.value && toStation.value) {
+                    // Find the stops matching the queried stations
+                    const fromStop = item.stops.find((stop: any) => stop.name === fromStation.value);
+                    const toStop = item.stops.find((stop: any) => stop.name === toStation.value);
+                    if (fromStop && toStop) {
+                        item.description = item.name + ' ' + fromStop.name + '-' + toStop.name;
+                    } else {
+                        item.description = item.name + ' ' + item.stops.at(0).name + '-' + item.stops.at(-1).name;
+                    }
+                } else {
+                    // No specific query, display full route
+                    item.description = item.name + ' ' + item.stops.at(0).name + '-' + item.stops.at(-1).name;
+                }
             });
         }
     } catch (e: any) {

@@ -30,7 +30,7 @@ public class ApplicationSteps {
 
     @Before
     public void initRestfulStep() {
-        restfulStep.setBaseUrl("http://localhost:%d/api".formatted(port));
+        restfulStep.setBaseUrl(String.format("http://localhost:%d/api", port));
     }
 
     @Before

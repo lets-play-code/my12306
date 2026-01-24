@@ -16,8 +16,12 @@ public class Browser {
     @PostConstruct
     public void createWebDriver() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch(new BrowserType.LaunchOptions() // or firefox, webkit
-                .setHeadless(false)
+        // 读取 headless 参数，默认为 true（AI 默认使用 headless 模式）
+        String headlessProp = System.getProperty("headless", "true");
+        boolean headless = !"false".equalsIgnoreCase(headlessProp);
+
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+                .setHeadless(headless)
                 .setSlowMo(100));
     }
 

@@ -1,5 +1,6 @@
 package com.agiletour.controller;
 
+import com.agiletour.dto.TrainResponse;
 import com.agiletour.entity.Ticket;
 import com.agiletour.entity.Train;
 import com.agiletour.entity.Stop;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,13 +37,30 @@ public class TrainsController {
     }
 
     @GetMapping("/trains")
-    public List<Train> queryTrains(@RequestParam(required = false) String from, @RequestParam(required = false) String to) {
+    public List<TrainResponse> queryTrains(@RequestParam(required = false) String from, @RequestParam(required = false) String to) {
         List<Train> allTrains = trainRepo.findAll();
         if (from == null || to == null) {
-            return allTrains;
+            return allTrains.stream()
+                    .map(train -> TrainResponse.from(train, null, null))
+                    .collect(Collectors.toList());
         }
+
         return allTrains.stream()
                 .filter(train -> hasRoute(train, from, to))
+                .map(train -> {
+                    // Convert station names to stop IDs for remaining tickets calculation
+                    Optional<Stop> fromStop = train.getStops().stream()
+                            .filter(stop -> stop.getName().equals(from))
+                            .findFirst();
+                    Optional<Stop> toStop = train.getStops().stream()
+                            .filter(stop -> stop.getName().equals(to))
+                            .findFirst();
+
+                    Integer fromStopId = fromStop.map(stop -> (int) (long) stop.getId()).orElse(null);
+                    Integer toStopId = toStop.map(stop -> (int) (long) stop.getId()).orElse(null);
+
+                    return TrainResponse.from(train, fromStopId, toStopId);
+                })
                 .collect(Collectors.toList());
     }
 
