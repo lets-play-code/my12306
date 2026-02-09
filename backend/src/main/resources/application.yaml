@@ -36,3 +36,29 @@ spring:
   clean-disabled: false
   baseline-on-migrate: true
   out-of-order: false
+
+---
+# 测试专用配置：使用独立的 MySQL 数据库和不同端口，与 bootRun 完全隔离
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:mysql://mysql.tool.net:23306/db_test?autoReconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: admin
+    password: 123456
+  jpa:
+    show-sql: true
+    hibernate:
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        default_catalog: db_test
+        dialect: org.hibernate.dialect.MySQL5Dialect
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: 8081
