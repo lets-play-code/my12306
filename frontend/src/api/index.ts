@@ -3,7 +3,7 @@ import authentication from '@/services/authenticationService'
 import { showMessage } from '@/main';
 
 const instance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: '/api',
     headers: {
         'Content-Type': 'application/json',
     },

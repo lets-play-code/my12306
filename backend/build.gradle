@@ -83,15 +83,63 @@ configurations {
     }
 }
 
+// 测试模式前端配置（集中在 .env.test 中修改）
+def FRONTEND_PORT = 9991
+def FRONTEND_DIR = new File("$projectDir/../frontend")
+
+// 停止前端进程的工具函数
+def killProcessesOnPort(int port) {
+    def proc = "lsof -i :$port -t".execute()
+    proc.waitFor()
+    def output = proc.text.trim()
+    if (output && proc.exitValue() == 0) {
+        def pids = output.split('\n')
+        for (def pid : pids) {
+            pid = pid.trim()
+            if (pid) {
+                def check = "kill -0 $pid 2>/dev/null".execute()
+                check.waitFor()
+                if (check.exitValue() == 0) {
+                    println "Killing process on port $port: $pid"
+                    "kill $pid".execute()
+                    sleep 200
+                }
+            }
+        }
+        sleep 500
+        def recheck = "lsof -i :$port -t".execute()
+        recheck.waitFor()
+        def remaining = recheck.text.trim()
+        if (remaining) {
+            println "Force killing remaining processes: $remaining"
+            remaining.split('\n').each { pid ->
+                pid = pid.trim()
+                if (pid) "kill -9 $pid".execute()
+            }
+        }
+    }
+}
+
+// 独立的停止前端任务，确保在 cucumber 任务结束后执行（无论成功还是失败）
+task stopFrontend {
+    doLast {
+        println "stopFrontend: killing processes on port $FRONTEND_PORT..."
+        killProcessesOnPort(FRONTEND_PORT)
+        println "stopFrontend: done"
+    }
+}
+
 task cucumber(type: JavaExec) {
     environment "SPRING_PROFILES_ACTIVE", "test"
-    dependsOn assemble, testClasses, test
+    dependsOn assemble, testClasses
     main = "io.cucumber.core.cli.Main"
     classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
     environment "PLAYWRIGHT_DOWNLOAD_HOST", "https://npmmirror.com/mirrors/playwright"
 
     // 透传所有系统属性到 JVM
     systemProperties = System.getProperties()
+    // 设置前端端口供 Browser.java 使用
+    systemProperty 'frontend.port', FRONTEND_PORT
 
     // 通过 -Pfile=src/test/resources/features/xxx.feature 指定运行某个 feature 文件。 -Pfile=src/test/resources/features/xxx.feature:yy 指定运行 feature 文件中yy行开始的场景
     //不指定则运行整个 features 目录
@@ -100,6 +148,50 @@ task cucumber(type: JavaExec) {
             '--glue', 'com.github.leeonky',
             project.hasProperty('file') ? project.file : 'src/test/resources'
             ]
+
+    // 在测试开始前启动前端
+    doFirst {
+        // 先清理端口上可能残留的前端进程
+        killProcessesOnPort(FRONTEND_PORT)
+
+        // 启动前端（使用 .env.test 配置），使用 nohup 确保进程不会因为 Gradle 退出而终止
+        println "Starting frontend on port $FRONTEND_PORT..."
+        def cmd = "cd '$FRONTEND_DIR' && nohup pnpm run dev:test -- --host 0.0.0.0 > /tmp/frontend-test.log 2>&1 &"
+        println "Command: $cmd"
+
+        // 使用 ProcessBuilder 执行命令（不等待）
+        def processBuilder = new ProcessBuilder("sh", "-c", cmd)
+        processBuilder.directory(FRONTEND_DIR)
+        processBuilder.start()
+
+        // 等待端口就绪
+        println "Waiting for frontend on port $FRONTEND_PORT..."
+        def maxWait = 60
+        def waited = 0
+        while (waited < maxWait) {
+            // 检查端口是否被占用
+            def checkProc = "lsof -i :$FRONTEND_PORT -t".execute()
+            checkProc.waitFor()
+            def portOutput = checkProc.text.trim()
+
+            if (checkProc.exitValue() == 0 && portOutput) {
+                println "Frontend is ready on port $FRONTEND_PORT (PIDs: $portOutput)"
+                break
+            }
+            sleep 500
+            waited++
+            if (waited % 10 == 0) {
+                println "Still waiting... ($waited s)"
+            }
+        }
+
+        if (waited >= maxWait) {
+            println "WARNING: Timeout waiting for frontend"
+        }
+    }
+
+    // 确保测试结束后停止前端（无论成功还是失败）
+    finalizedBy stopFrontend
 }
 
 bootRun {

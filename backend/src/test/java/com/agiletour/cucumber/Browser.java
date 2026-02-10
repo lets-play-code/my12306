@@ -35,6 +35,8 @@ public class Browser {
         reset();
         browserContext = browser.newContext();
         page = browserContext.newPage();
+        // 设置全局默认超时为 2 秒
+        page.setDefaultTimeout(2000);
     }
 
     public void reset() {
@@ -42,7 +44,8 @@ public class Browser {
     }
 
     public void launchByUrl(String path) {
-        String url = "http://localhost:9990" + path;
+        String frontendPort = System.getProperty("frontend.port", "9991");
+        String url = "http://localhost:" + frontendPort + path;
         page.navigate(url);
     }
 
@@ -52,7 +55,7 @@ public class Browser {
 
     public void shouldHaveText(String text) {
         // 使用 Playwright 的 getByText API，更现代的写法
-        page.getByText(text).waitFor();
+        page.getByText(text).waitFor(new Locator.WaitForOptions().setTimeout(2000));
     }
 
     public void shouldNotHaveText(String text) {
