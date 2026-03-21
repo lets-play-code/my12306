@@ -7,10 +7,15 @@ TRUNCATE TABLE ticket;
 TRUNCATE TABLE seat;
 TRUNCATE TABLE stop;
 TRUNCATE TABLE train;
+TRUNCATE TABLE user;
 
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 
 -- Deterministic inserts so IDs start from 1 in a clean schema
+-- Demo users
+INSERT INTO user (username, password, full_name) VALUES ('zhangsan@example.com', '123456', '张三');
+INSERT INTO user (username, password, full_name) VALUES ('lisi@example.com', '123456', '李四');
+
 INSERT INTO train (name) VALUES ('G102');
 INSERT INTO train (name) VALUES ('G103');
 

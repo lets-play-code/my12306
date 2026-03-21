@@ -35,7 +35,7 @@ public class ApplicationSteps {
 
     @Before
     public void cleanDb() {
-        asList("ticket", "train", "seat", "stop").forEach(this::clearTable);
+        asList("ticket", "train", "seat", "stop", "user").forEach(this::clearTable);
         jFactory.getDataRepository().clear();
     }
 

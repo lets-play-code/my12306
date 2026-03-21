@@ -1,3 +1,11 @@
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` serial primary key,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(255) NOT NULL
+);
+
 DROP TABLE IF EXISTS `train`;
 CREATE TABLE `train` (
   `id` serial primary key,

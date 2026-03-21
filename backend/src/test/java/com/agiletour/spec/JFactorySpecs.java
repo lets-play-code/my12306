@@ -4,6 +4,7 @@ import com.agiletour.entity.Seat;
 import com.agiletour.entity.Stop;
 import com.agiletour.entity.Ticket;
 import com.agiletour.entity.Train;
+import com.agiletour.entity.User;
 import com.github.leeonky.jfactory.Spec;
 
 public class JFactorySpecs {
@@ -20,6 +21,10 @@ public class JFactorySpecs {
     }
 
     public static class 停靠站 extends Spec<Stop> {
+
+    }
+
+    public static class 用户 extends Spec<User> {
 
     }
 }
