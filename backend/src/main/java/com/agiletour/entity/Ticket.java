@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -29,4 +30,7 @@ public class Ticket {
 
     @OneToOne
     private Stop to;
+
+    @ManyToOne
+    private User user;
 }

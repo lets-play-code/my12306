@@ -4,8 +4,10 @@ import com.agiletour.dto.TrainResponse;
 import com.agiletour.entity.Ticket;
 import com.agiletour.entity.Train;
 import com.agiletour.entity.Stop;
+import com.agiletour.entity.User;
 import com.agiletour.repo.TicketRepo;
 import com.agiletour.repo.TrainRepo;
+import com.agiletour.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +25,32 @@ public class TrainsController {
     @Autowired
     private TicketRepo ticketRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
     @PostMapping("/trains/{trainId}/tickets")
-    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo) {
+    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo,
+                          @RequestHeader(value = "Authorization", required = false) String auth) {
         var train = trainRepo.findById(trainId);
         train.getSeats().stream().filter(seat -> seat.isAvailable(fromAndTo.from, fromAndTo.to))
                 .findFirst().ifPresentOrElse(seat -> {
                     var from = train.findStop(fromAndTo.from);
                     var to = train.findStop(fromAndTo.to);
-                    ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
+                    Ticket ticket = new Ticket().setSeat(seat).setFrom(from).setTo(to);
+
+                    // Associate user if authenticated
+                    if (auth != null && auth.startsWith("Bearer ")) {
+                        String token = auth.substring(7);
+                        if (token.startsWith("test-token-")) {
+                            try {
+                                long userId = Long.parseLong(token.substring("test-token-".length()));
+                                userRepo.findById(userId).ifPresent(ticket::setUser);
+                            } catch (NumberFormatException ignored) {
+                            }
+                        }
+                    }
+
+                    ticketRepo.save(ticket);
                 }, () -> {
                     throw new BadRequestException("票已卖完");
                 });

@@ -9,5 +9,7 @@ public interface TicketRepo extends Repository<Ticket, Long> {
 
     List<Ticket> findAll();
 
+    List<Ticket> findByUserId(long userId);
+
     void save(Ticket ticket);
 }

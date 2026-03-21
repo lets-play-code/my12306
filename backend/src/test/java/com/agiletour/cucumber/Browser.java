@@ -71,6 +71,11 @@ public class Browser {
         locator.fill(value);
     }
 
+    public void inputById(String id, String value) {
+        Locator locator = page.locator(String.format("#%s", id));
+        locator.fill(value);
+    }
+
     public void click() {
         Locator locator = page.locator("[data-testid='save-button']");
         locator.click();
@@ -84,5 +89,12 @@ public class Browser {
         Locator locator = page.locator(String.format("//tr[td[contains(normalize-space(),'%s')]]//button[normalize-space()='%s']",
                 rowText, action));
         locator.click();
+    }
+
+    public void shouldHaveUrlContaining(String path) {
+        String currentUrl = page.url();
+        if (!currentUrl.contains(path)) {
+            throw new AssertionError("URL should contain '" + path + "' but was '" + currentUrl + "'");
+        }
     }
 }

@@ -25,5 +25,6 @@ public class JFactoryConfig {
     private void registerSpecs(JFactory jFactory) {
         Classes.assignableTypesOf(Spec.class, "com.agiletour.spec").forEach(jFactory::register);
         jFactory.ignoreDefaultValue(p -> p.getName().equals("id"));
+        jFactory.ignoreDefaultValue(p -> p.getName().equals("departureTime"));
     }
 }

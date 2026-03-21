@@ -28,4 +28,7 @@ public class Stop {
 
     private String name;
 
+    @Column(name = "departure_time")
+    private String departureTime;
+
 }

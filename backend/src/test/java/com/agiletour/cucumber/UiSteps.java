@@ -33,6 +33,32 @@ public class UiSteps {
         browser.clickByText("查询");
     }
 
+    @io.cucumber.java.zh_cn.假如("打开登录页面")
+    public void openLoginPage() {
+        browser.launchByUrl("/login");
+    }
+
+    @当("输入用户名{string}和密码{string}")
+    public void inputUsernameAndPassword(String username, String password) {
+        browser.inputById("email", username);
+        browser.inputById("password", password);
+    }
+
+    @当("点击{string}按钮")
+    public void clickButton(String text) {
+        browser.clickByText(text);
+    }
+
+    @那么("等待2秒后当前页面URL包含{string}")
+    public void waitAndCheckUrl(String path) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            // ignore
+        }
+        browser.shouldHaveUrlContaining(path);
+    }
+
     @那么("页面包含如下内容:")
     public void shouldDisplayContents(DataTable dataTable) {
         dataTable.asList().forEach(text -> browser.shouldHaveText(text));
