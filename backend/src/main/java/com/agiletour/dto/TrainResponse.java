@@ -17,6 +17,7 @@ import java.util.List;
 public class TrainResponse {
     private Long id;
     private String name;
+    private String departureTime;
     private List<Stop> stops = new ArrayList<>();
     private int remainingTickets;
 
@@ -24,6 +25,7 @@ public class TrainResponse {
         TrainResponse response = TrainResponse.builder()
                 .id(train.getId())
                 .name(train.getName())
+                .departureTime(train.getDepartureTime())
                 .stops(train.getStops())
                 .build();
 

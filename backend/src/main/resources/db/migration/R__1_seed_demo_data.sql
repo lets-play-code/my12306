@@ -11,8 +11,10 @@ TRUNCATE TABLE train;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 
 -- Deterministic inserts so IDs start from 1 in a clean schema
-INSERT INTO train (name) VALUES ('G102');
-INSERT INTO train (name) VALUES ('G103');
+INSERT INTO train (name, departure_time)
+VALUES ('G102', DATE_FORMAT(DATE_ADD(UTC_TIMESTAMP(), INTERVAL 2 HOUR), '%Y-%m-%dT%H:%i:%sZ'));
+INSERT INTO train (name, departure_time)
+VALUES ('G103', DATE_FORMAT(DATE_ADD(UTC_TIMESTAMP(), INTERVAL 5 HOUR), '%Y-%m-%dT%H:%i:%sZ'));
 
 -- Stops for G102: 北京南 -> 南京南 -> 镇江 -> 上海虹桥
 INSERT INTO stop (name, `order`, train_id)

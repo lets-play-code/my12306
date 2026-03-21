@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS `train`;
 CREATE TABLE `train` (
   `id` serial primary key,
-   `name` varchar(255) NOT NULL
+   `name` varchar(255) NOT NULL,
+   `departure_time` varchar(255)
 );
 
 DROP TABLE IF EXISTS `seat`;

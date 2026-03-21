@@ -1,7 +1,6 @@
 package com.agiletour.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +17,9 @@ public class Train {
     private long id;
 
     private String name;
+
+    @Column(name = "departure_time")
+    private String departureTime;
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @JsonIgnore
