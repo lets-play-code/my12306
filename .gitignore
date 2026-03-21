@@ -32,3 +32,6 @@ env/videos
 
 # asdf
 .tool-versions
+
+# git worktrees
+.worktrees/
