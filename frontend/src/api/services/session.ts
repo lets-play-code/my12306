@@ -4,6 +4,7 @@ import Request from '../request'
 const modelName = 'sessions'
 export interface TokenResponse {
     token: string
+    fullName: string
 }
 
 export interface CurrentUser {
@@ -14,8 +15,8 @@ export interface CurrentUser {
 class Session {
     login = (user: LoginUser): Promise<TokenResponse> => Request.post(`${modelName}`, user) as Promise<TokenResponse>
 
-    currentUser = (): Promise<CurrentUser> => Request.get(`${modelName}`)
+    // 获取当前用户信息
+    currentUser = (): Promise<CurrentUser> => Request.get(`${modelName}/current`)
 }
 
 export default new Session()
-
