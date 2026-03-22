@@ -1,6 +1,12 @@
 # language: zh-CN
 功能: 买火车票
 
+  背景:
+    假如存在"用户":
+      | username              | password | fullName |
+      | zhangsan@example.com  | 123456   | 张三     |
+    假如Authorization头是"Bearer zhangsan@example.com"
+
   场景: 显示所有车次
     假如存在"停靠站":
       | train.name | order | name |
@@ -103,8 +109,8 @@
     """
       那么所有"车票"应为:
     """
-    : |  seat.name | from.name | to.name |
-      |  2D4       | 北京南     | 上海虹桥 |
+    : |  seat.name | user.username         | from.name | to.name |
+      |  2D4       | zhangsan@example.com  | 北京南     | 上海虹桥 |
     """
 
     场景: 买全程票 - 找未卖出的座位
@@ -117,8 +123,8 @@
         | 2D4  | G102       |
         | 2D5  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 北京南       | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 北京南       | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
       """
       {
@@ -132,9 +138,9 @@
       """
       那么所有"车票"应为:
       """
-      : | seat.name |
-        | 2D4       |
-        | 2D5       |
+      : | seat.name | user.username         |
+        | 2D4       | zhangsan@example.com  |
+        | 2D5       | zhangsan@example.com  |
       """
 
     场景: 买全程票 - 座位已卖完
@@ -146,8 +152,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 北京南       | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 北京南       | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
       """
       {
@@ -166,8 +172,8 @@
       """
       那么所有"车票"应为:
       """
-      : | seat.name |
-        | 2D4       |
+      : | seat.name | user.username         |
+        | 2D4       | zhangsan@example.com  |
       """
 
     场景: 买非全程票
@@ -192,8 +198,8 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 南京南     | 上海虹桥 |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 南京南     | 上海虹桥 |
       """
 
     场景: 买非全程票 - 找未卖出的区间from=ticket.to
@@ -206,8 +212,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 北京南       | G102          | 南京南     |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 北京南       | G102          | 南京南     |
       当POST "/trains/1/tickets":
       """
       {
@@ -221,9 +227,9 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 北京南     | 南京南  |
-        |  2D4       | 南京南     | 上海虹桥 |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 北京南     | 南京南  |
+        |  2D4       | zhangsan@example.com  | 南京南     | 上海虹桥 |
       """
 
     场景: 买非全程票 - 找未卖出的区间from>ticket.to
@@ -237,8 +243,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 北京南       | G102          | 南京南     |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 北京南       | G102          | 南京南     |
       当POST "/trains/1/tickets":
       """
       {
@@ -252,9 +258,9 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 北京南     | 南京南  |
-        |  2D4       | 镇江       | 上海虹桥 |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 北京南     | 南京南  |
+        |  2D4       | zhangsan@example.com  | 镇江       | 上海虹桥 |
       """
 
     场景: 买非全程票 - 无可卖区间from<ticket.to
@@ -267,8 +273,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 北京南       | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 北京南       | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
       """
       {
@@ -282,8 +288,8 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 北京南     | 上海虹桥  |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 北京南     | 上海虹桥  |
       """
 
     场景: 买非全程票 - 找未卖出的区间to=ticket.from
@@ -296,8 +302,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 南京南       | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 南京南       | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
       """
       {
@@ -311,9 +317,9 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 南京南     | 上海虹桥 |
-        |  2D4       | 北京南     | 南京南  |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 南京南     | 上海虹桥 |
+        |  2D4       | zhangsan@example.com  | 北京南     | 南京南  |
       """
 
     场景: 买非全程票 - 无可卖区间to>ticket.from
@@ -326,8 +332,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 南京南       | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 南京南       | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
       """
       {
@@ -341,8 +347,8 @@
       """
       那么所有"车票"应为:
       """
-      : |  seat.name | from.name | to.name |
-        |  2D4       | 南京南     | 上海虹桥 |
+      : |  seat.name | user.username         | from.name | to.name |
+        |  2D4       | zhangsan@example.com  | 南京南     | 上海虹桥 |
       """
 
     场景: 买非全程票 - 找未卖出的区间to<ticket.from
@@ -356,8 +362,8 @@
         | name | train.name |
         | 2D4  | G102       |
       假如存在"车票":
-        | seat.name | from.train.name | from.name | to.train.name | to.name |
-        | 2D4       | G102            | 镇江        | G102          | 上海虹桥    |
+        | seat.name | user.username         | from.train.name | from.name | to.train.name | to.name |
+        | 2D4       | zhangsan@example.com  | G102            | 镇江        | G102          | 上海虹桥    |
       当POST "/trains/1/tickets":
         """
         {
@@ -371,7 +377,7 @@
         """
       那么所有"车票"应为:
         """
-        : |  seat.name | from.name | to.name |
-          |  2D4       | 镇江       | 上海虹桥 |
-          |  2D4       | 北京南     | 南京南  |
+        : |  seat.name | user.username         | from.name | to.name |
+          |  2D4       | zhangsan@example.com  | 镇江       | 上海虹桥 |
+          |  2D4       | zhangsan@example.com  | 北京南     | 南京南  |
         """

@@ -2,6 +2,13 @@
 @ui
 功能: 买火车票
 
+  背景:
+    假如存在"用户":
+      | username              | password | fullName |
+      | zhangsan@example.com  | 123456   | 张三     |
+    当打开登录页面
+    当用户输入用户名"zhangsan@example.com"和密码"123456"登录
+
   场景: 默认不显示火车票列表
     假如存在"停靠站":
       | train.name | order | name |
@@ -45,8 +52,8 @@
     当买火车票"G103"
     那么所有"车票"应为:
     """
-    : |  seat.name | seat.train.name | from.name | to.name |
-      |  2D4       | G103            | 上海虹桥   | 北京南   |
+    : |  seat.name | user.username         | seat.train.name | from.name | to.name |
+      |  2D4       | zhangsan@example.com  | G103            | 上海虹桥   | 北京南   |
     """
 
   场景: 票卖完时显示错误信息
@@ -58,8 +65,8 @@
       | name | train.name |
       | 2D4  | G104       |
     假如存在"车票":
-      | seat.name | seat.train.name | from.name | to.name |
-      | 2D4       | G104            | 北京南       | 上海虹桥    |
+      | seat.name | user.username         | seat.train.name | from.name | to.name |
+      | 2D4       | zhangsan@example.com  | G104            | 北京南       | 上海虹桥    |
     当查询火车票从"北京南"到"上海虹桥"
     当买火车票"G104"
     那么显示错误信息"票已卖完"
@@ -147,8 +154,8 @@
     当买火车票"G108"
     那么所有"车票"应为:
     """
-    : |  seat.name | seat.train.name | from.name | to.name |
-      |  2D4       | G108            | 北京南     | 南京南   |
+    : |  seat.name | user.username         | seat.train.name | from.name | to.name |
+      |  2D4       | zhangsan@example.com  | G108            | 北京南     | 南京南   |
     """
 
   场景: 买了前半程票后查询前半程余票应减少

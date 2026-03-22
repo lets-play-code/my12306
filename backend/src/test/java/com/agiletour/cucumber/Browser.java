@@ -89,4 +89,11 @@ public class Browser {
                 rowText, action));
         locator.click();
     }
+
+    public void shouldHaveClassContaining(String testId, String className) {
+        String classValue = page.locator(String.format("[data-testid='%s']", testId)).first().getAttribute("class");
+        if (classValue == null || !classValue.contains(className)) {
+            throw new AssertionError(String.format("元素 %s 不包含 class %s，实际 class: %s", testId, className, classValue));
+        }
+    }
 }

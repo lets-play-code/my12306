@@ -64,4 +64,9 @@ public class UiSteps {
     public void shouldDisplayErrorMessage(String message) {
         browser.shouldHaveText(message);
     }
+
+    @那么("元素{string}包含class{string}")
+    public void shouldHaveClassContaining(String testId, String className) {
+        browser.shouldHaveClassContaining(testId, className);
+    }
 }
