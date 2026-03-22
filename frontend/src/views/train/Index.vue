@@ -1,9 +1,46 @@
 <template>
     <div class="bg-white shadow-md rounded-lg p-6">
+        <!-- 临近车次警告横幅 -->
+        <el-alert
+            v-if="showUpcomingAlert && upcomingTickets.length > 0"
+            type="error"
+            title="⚠️ 温馨提示"
+            :closable="true"
+            @close="handleCloseAlert"
+            class="mb-4"
+        >
+            <template #default>
+                <div class="text-sm">
+                    <p class="mb-2 font-medium">您购买的车次即将发车，请注意出行时间：</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li v-for="ticket in upcomingTickets" :key="ticket.id" class="text-red-600">
+                            <span class="font-bold">{{ ticket.trainName }}</span> |
+                            {{ ticket.travelDate }} |
+                            {{ formatRemainingTime(ticket.remainingMinutes) }}后发车 |
+                            {{ ticket.fromStation }} → {{ ticket.toStation }}
+                        </li>
+                    </ul>
+                </div>
+            </template>
+        </el-alert>
+
         <h1 class="text-2xl font-bold mb-4">火车信息列表</h1>
         
         <!-- 查询表单 -->
         <div class="mb-4 flex gap-4 items-end">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">出发日期</label>
+                <el-date-picker
+                    v-model="travelDate"
+                    type="date"
+                    placeholder="选择日期"
+                    :disabled-date="disabledDate"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD"
+                    data-testid="travel-date"
+                    class="w-36"
+                />
+            </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">始发站</label>
                 <el-input 
@@ -46,8 +83,45 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import  axios from "@/api/index";
+import axios from "@/api/index";
 import { showMessage } from "@/main";
+import ticketsService, { UpcomingTicketResponse } from "@/api/services/tickets";
+import authentication from "@/services/authenticationService";
+
+// 新增状态
+const showUpcomingAlert = ref(true);
+const upcomingTickets = ref<UpcomingTicketResponse[]>([]);
+const travelDate = ref<string>(new Date().toISOString().split('T')[0]);
+
+// 新增方法
+const handleCloseAlert = () => {
+    showUpcomingAlert.value = false;
+};
+
+const formatRemainingTime = (minutes: number): string => {
+    if (minutes >= 60) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours}小时${mins > 0 ? mins + '分钟' : ''}`;
+    }
+    return `${minutes}分钟`;
+};
+
+const disabledDate = (time: Date) => {
+    return time.getTime() < Date.now() - 8.64e7; // 禁用今天之前的日期
+};
+
+// 在 onMounted 中获取临近提醒
+onMounted(async () => {
+    if (authentication.isLoggedIn()) {
+        try {
+            const tickets = await ticketsService.getUpcomingTickets();
+            upcomingTickets.value = tickets || [];
+        } catch (e) {
+            console.log('获取临近车次失败:', e);
+        }
+    }
+});
 
 const trains = ref([]);
 const loading = ref(false);
@@ -79,13 +153,22 @@ const handleClick = async (row: any) => {
             toStopId = row.stops.at(-1).id;
         }
         
+        // 添加 travelDate 参数
         const res = await axios.post('/trains/'+row.id+'/tickets', {
-          from: fromStopId,
-          to: toStopId
+            from: fromStopId,
+            to: toStopId,
+            travelDate: travelDate.value
         });
         showMessage("购票成功");
         // 购票成功后刷新列表
         await handleQuery();
+        
+        // 购票成功后刷新临近提醒
+        if (authentication.isLoggedIn()) {
+            const tickets = await ticketsService.getUpcomingTickets();
+            upcomingTickets.value = tickets || [];
+            showUpcomingAlert.value = true;
+        }
     } catch (e: any) {
         console.log(e);
         if (e.response && e.response.data && e.response.data.message) {
