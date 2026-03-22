@@ -20,6 +20,23 @@ public class UiSteps {
         browser.launchByUrl("/");
     }
 
+    @当("打开登录页面")
+    public void openLoginPage() {
+        browser.launchByUrl("/login");
+    }
+
+    @当("用户输入用户名{string}和密码{string}登录")
+    public void login(String username, String password) {
+        browser.input("username", username);
+        browser.input("password", password);
+        browser.clickByText("Sign in");
+    }
+
+    @当("点击链接{string}")
+    public void clickLink(String text) {
+        browser.clickLinkByText(text);
+    }
+
     @当("买火车票{string}")
     public void buyTicket(String trainNumber) {
         browser.clickInRow(trainNumber, "购票");

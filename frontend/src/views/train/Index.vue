@@ -46,16 +46,25 @@
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import  axios from "@/api/index";
 import { showMessage } from "@/main";
+import authenticationService from '@/services/authenticationService';
 
 const trains = ref([]);
 const loading = ref(false);
 const error = ref('');
 const fromStation = ref('');
 const toStation = ref('');
+const router = useRouter();
 
 const handleClick = async (row: any) => {
+    if (!authenticationService.getToken()) {
+        showMessage('请先登录');
+        router.push('/login');
+        return;
+    }
+
     try {
         // 如果用户指定了始发站和终点站，使用用户查询的站点；否则使用全程
         let fromStopId, toStopId;

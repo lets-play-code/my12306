@@ -53,9 +53,13 @@ public class Browser {
         page.click(String.format("button:has-text('%s')", text));
     }
 
+    public void clickLinkByText(String text) {
+        page.click(String.format("a:has-text('%s')", text));
+    }
+
     public void shouldHaveText(String text) {
-        // 使用 Playwright 的 getByText API，更现代的写法
-        page.getByText(text).waitFor(new Locator.WaitForOptions().setTimeout(2000));
+        Locator locator = page.getByText(text).first();
+        locator.waitFor(new Locator.WaitForOptions().setTimeout(2000));
     }
 
     public void shouldNotHaveText(String text) {

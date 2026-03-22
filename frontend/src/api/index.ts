@@ -16,8 +16,9 @@ instance.interceptors.response.use(
     },
     error => {
         if (error.response?.status === 401) {
+            const message = error.response?.data?.message || '请先登录';
             authentication.clearToken();
-            showMessage('You have been logged out. Please login again.');
+            showMessage(message);
         }
         return Promise.reject(error);
     }

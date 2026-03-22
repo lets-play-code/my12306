@@ -16,6 +16,11 @@
                                 首页
                             </a>
                         </li>
+                        <li v-if="currentUser">
+                            <a class="text-gray-500 transition hover:text-gray-500/75" href="/my-tickets">
+                                我的车票
+                            </a>
+                        </li>
                     </ul>
                 </nav>
 

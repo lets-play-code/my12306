@@ -9,6 +9,7 @@ class AuthenticationService {
 
     login = async (user: LoginUser) => {
         const response = await session.login(user)
+        this.currentUser = undefined
         localStorage.setItem(TOKEN, response.token)
     }
 
@@ -28,6 +29,7 @@ class AuthenticationService {
     }
     
     clearToken = () => {
+        this.currentUser = undefined
         localStorage.removeItem(TOKEN)
     }
     

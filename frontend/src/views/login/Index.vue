@@ -11,6 +11,7 @@
                     <div>
                         <label for="email" class="sr-only">Email address</label>
                         <input v-model.trim="loginUser.username" id="email" name="email" type="email" autocomplete="email" required
+                            data-testid="username"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-white-300 placeholder-white-500 text-white-900 rounded-t-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
                             placeholder="Email address" />
                     </div>
@@ -18,6 +19,7 @@
                         <label for="password" class="sr-only">Password</label>
                         <input v-model.trim="loginUser.password" id="password" name="password" type="password"
                             autocomplete="current-password" required
+                            data-testid="password"
                             class="appearance-none rounded-none relative block w-full px-3 py-2 border border-white-300 placeholder-white-500 text-white-900 rounded-t-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
                             placeholder="Password" />
                     </div>
@@ -33,6 +35,7 @@
 
                 <div>
                     <button type="submit"
+                        data-testid="login-button"
                         class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
                         Sign in
                     </button>
