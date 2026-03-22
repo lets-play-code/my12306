@@ -20,14 +20,16 @@ INSERT INTO train (name) VALUES ('G102');
 INSERT INTO train (name) VALUES ('G103');
 
 -- Stops for G102: 北京南 -> 南京南 -> 镇江 -> 上海虹桥
+-- Note: dev seed times are effectively shifted +8h by current dev DB/JDBC timezone handling,
+-- so 08:00 here shows as 16:00 in the application.
 INSERT INTO stop (name, `order`, train_id, departure_time)
-SELECT '北京南', 1, t.id, '2026-03-21 08:00:00' FROM train t WHERE t.name = 'G102';
+SELECT '北京南', 1, t.id, '2026-03-22 08:00:00' FROM train t WHERE t.name = 'G102';
 INSERT INTO stop (name, `order`, train_id, departure_time)
-SELECT '南京南', 2, t.id, '2026-03-21 09:30:00' FROM train t WHERE t.name = 'G102';
+SELECT '南京南', 2, t.id, '2026-03-22 09:30:00' FROM train t WHERE t.name = 'G102';
 INSERT INTO stop (name, `order`, train_id, departure_time)
-SELECT '镇江', 3, t.id, '2026-03-21 10:00:00' FROM train t WHERE t.name = 'G102';
+SELECT '镇江', 3, t.id, '2026-03-22 10:00:00' FROM train t WHERE t.name = 'G102';
 INSERT INTO stop (name, `order`, train_id, departure_time)
-SELECT '上海虹桥', 4, t.id, '2026-03-21 11:00:00' FROM train t WHERE t.name = 'G102';
+SELECT '上海虹桥', 4, t.id, '2026-03-22 11:00:00' FROM train t WHERE t.name = 'G102';
 
 -- Stops for G103: 上海虹桥 -> 北京南
 INSERT INTO stop (name, `order`, train_id, departure_time)
