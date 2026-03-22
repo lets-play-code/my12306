@@ -4,11 +4,15 @@ import com.agiletour.dto.TrainResponse;
 import com.agiletour.entity.Ticket;
 import com.agiletour.entity.Train;
 import com.agiletour.entity.Stop;
+import com.agiletour.entity.User;
 import com.agiletour.repo.TicketRepo;
 import com.agiletour.repo.TrainRepo;
+import com.agiletour.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,14 +27,37 @@ public class TrainsController {
     @Autowired
     private TicketRepo ticketRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
     @PostMapping("/trains/{trainId}/tickets")
-    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo) {
+    public void buyTicket(
+            @PathVariable long trainId,
+            @RequestBody FromAndTo fromAndTo,
+            HttpServletRequest request) {
+        // 获取当前用户 ID
+        long userId = (Long) request.getAttribute("userId");
+
         var train = trainRepo.findById(trainId);
         train.getSeats().stream().filter(seat -> seat.isAvailable(fromAndTo.from, fromAndTo.to))
                 .findFirst().ifPresentOrElse(seat -> {
                     var from = train.findStop(fromAndTo.from);
                     var to = train.findStop(fromAndTo.to);
-                    ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
+
+                    // 查找用户
+                    User user = userRepo.findById(userId).orElseThrow();
+
+                    // 解析日期
+                    LocalDate travelDate = LocalDate.parse(fromAndTo.travelDate);
+
+                    Ticket ticket = new Ticket()
+                            .setSeat(seat)
+                            .setFrom(from)
+                            .setTo(to)
+                            .setUser(user)
+                            .setTravelDate(travelDate);
+
+                    ticketRepo.save(ticket);
                 }, () -> {
                     throw new BadRequestException("票已卖完");
                 });
@@ -77,5 +104,6 @@ public class TrainsController {
 
     public static class FromAndTo {
         public int from, to;
+        public String travelDate;
     }
 }
