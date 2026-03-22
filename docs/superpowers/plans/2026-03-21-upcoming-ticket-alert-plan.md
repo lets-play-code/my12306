@@ -82,12 +82,13 @@ CREATE TABLE IF NOT EXISTS `user` (
     `full_name` VARCHAR(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 插入测试用户: alice/password123, bob/password456
+-- 插入测试用户: alice/password123, bob/password123
+-- 密码使用 BCrypt 加密
 INSERT INTO `user` (username, password, full_name) VALUES 
-    ('alice', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alice Wang'),
-    ('bob', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Bob Chen');
+    ('alice', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Alice Wang'),
+    ('bob', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Bob Chen');
 ```
-> 注：密码 BCrypt 加密后的值对应 "password123"
+> 注：BCrypt 哈希 `$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe` 对应明文 "password123"
 
 - [ ] **Step 2: 在种子数据中添加测试用户**
 
@@ -434,11 +435,12 @@ package com.agiletour.controller;
 
 import com.agiletour.dto.LoginRequest;
 import com.agiletour.dto.TokenResponse;
+import com.agiletour.dto.CurrentUserResponse;
 import com.agiletour.entity.User;
 import com.agiletour.repo.UserRepo;
 import com.agiletour.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -451,13 +453,15 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @PostMapping("/sessions")
     public TokenResponse login(@RequestBody LoginRequest request) {
         User user = userRepo.findByUsername(request.getUsername())
                 .orElseThrow(() -> new BadRequestException("用户名或密码错误"));
 
-        // 简单的密码比较（生产环境应使用 BCrypt）
-        if (!user.getPassword().equals(request.getPassword())) {
+        // 使用 BCrypt 验证密码
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
         }
 
@@ -465,7 +469,7 @@ public class AuthController {
         return new TokenResponse(token, user.getFullName());
     }
 
-    @GetMapping("/sessions")
+    @GetMapping("/sessions/current")
     public CurrentUserResponse getCurrentUser(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         long userId = jwtUtil.getUserIdFromToken(token);
@@ -476,13 +480,20 @@ public class AuthController {
 }
 ```
 
-> 注意：需要在 BadRequestException 中添加构造函数或使用现有构造函数
+> 需要在 build.gradle 添加 spring-security-crypto 依赖
 
-- [ ] **Step 2: 提交**
+- [ ] **Step 2: 添加密码编码器依赖**
+
+在 build.gradle 的 dependencies 中添加：
+```groovy
+implementation 'org.springframework.security:spring-security-crypto:5.4.6'
+```
+
+- [ ] **Step 3: 提交**
 
 ```bash
 cd backend
-git add src/main/java/com/agiletour/controller/AuthController.java
+git add src/main/java/com/agiletour/controller/AuthController.java build.gradle
 git commit -m "feat: add AuthController for login"
 ```
 
@@ -722,9 +733,10 @@ git commit -m "feat: update buyTicket to accept travelDate and userId"
 package com.agiletour.repo;
 
 import com.agiletour.entity.Ticket;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TicketRepo extends Repository<Ticket, Long> {
@@ -733,11 +745,15 @@ public interface TicketRepo extends Repository<Ticket, Long> {
 
     void save(Ticket ticket);
 
-    // 新增方法：按用户查询所有票
-    List<Ticket> findByUserId(long userId);
-
-    // 新增方法：查询用户的所有票（按出发日期排序）
-    List<Ticket> findByUserIdOrderByTravelDateAsc(long userId);
+    // 新增方法：按用户查询所有票（使用 JOIN FETCH 避免 N+1）
+    @Query("SELECT t FROM Ticket t " +
+           "JOIN FETCH t.seat s " +
+           "JOIN FETCH s.train " +
+           "JOIN FETCH t.from " +
+           "JOIN FETCH t.to " +
+           "WHERE t.user.id = :userId " +
+           "ORDER BY t.travelDate ASC")
+    List<Ticket> findByUserIdOrderByTravelDateAsc(@Param("userId") long userId);
 }
 ```
 
@@ -933,7 +949,8 @@ export interface CurrentUser {
 class Session {
     login = (user: any): Promise<TokenResponse> => Request.post(`${modelName}`, user)
 
-    currentUser = (): Promise<CurrentUser> => Request.get(`${modelName}`)
+    // 获取当前用户信息
+    currentUser = (): Promise<CurrentUser> => Request.get(`${modelName}/current`)
 }
 
 export default new Session()
@@ -1246,9 +1263,14 @@ cd backend
 
 ### 4. 测试登录 API
 ```bash
+# 登录
 curl -X POST http://localhost:8080/api/sessions \
   -H "Content-Type: application/json" \
   -d '{"username":"alice","password":"password123"}'
+
+# 获取 Token 后测试当前用户 API
+curl http://localhost:8080/api/sessions/current \
+  -H "Authorization: Bearer <token>"
 ```
 
 ### 5. 启动前端
