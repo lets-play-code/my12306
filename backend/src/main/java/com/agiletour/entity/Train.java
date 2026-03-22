@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class Train {
     private long id;
 
     private String name;
+
+    @Column(name = "departure_time", nullable = false)
+    private LocalTime departureTime = LocalTime.of(8, 0);
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL)
     @JsonIgnore

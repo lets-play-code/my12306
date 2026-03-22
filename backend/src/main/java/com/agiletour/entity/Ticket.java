@@ -4,10 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.time.LocalDate;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -29,4 +27,10 @@ public class Ticket {
 
     @OneToOne
     private Stop to;
+
+    @ManyToOne
+    private User user;
+
+    @Column(name = "travel_date", nullable = false)
+    private LocalDate travelDate;
 }
