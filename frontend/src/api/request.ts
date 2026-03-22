@@ -6,7 +6,7 @@ const config = {
   }
 }
 
-const prefix = '/api/'
+const prefix = ''
 
 class Request {
   get = <T = any> (url: string, params?: object): Promise<T> => {
