@@ -4,11 +4,13 @@ import com.agiletour.dto.TrainResponse;
 import com.agiletour.entity.Ticket;
 import com.agiletour.entity.Train;
 import com.agiletour.entity.Stop;
+import com.agiletour.entity.User;
 import com.agiletour.repo.TicketRepo;
 import com.agiletour.repo.TrainRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,14 +25,19 @@ public class TrainsController {
     @Autowired
     private TicketRepo ticketRepo;
 
+    @Autowired
+    private AuthenticatedUserSupport authSupport;
+
     @PostMapping("/trains/{trainId}/tickets")
-    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo) {
+    public void buyTicket(@PathVariable long trainId, @RequestBody FromAndTo fromAndTo, HttpServletRequest request) {
+        User user = authSupport.requiredUser(request.getHeader("Authorization"));
+        
         var train = trainRepo.findById(trainId);
         train.getSeats().stream().filter(seat -> seat.isAvailable(fromAndTo.from, fromAndTo.to))
                 .findFirst().ifPresentOrElse(seat -> {
                     var from = train.findStop(fromAndTo.from);
                     var to = train.findStop(fromAndTo.to);
-                    ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to));
+                    ticketRepo.save(new Ticket().setSeat(seat).setFrom(from).setTo(to).setUser(user));
                 }, () -> {
                     throw new BadRequestException("票已卖完");
                 });
