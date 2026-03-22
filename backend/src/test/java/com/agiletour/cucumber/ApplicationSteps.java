@@ -25,6 +25,10 @@ public class ApplicationSteps {
 
     @Autowired
     private JFactory jFactory;
+
+    @Autowired(required = false)
+    private FakeCurrentTimeProvider fakeCurrentTimeProvider;
+
     @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
@@ -37,6 +41,9 @@ public class ApplicationSteps {
     public void cleanDb() {
         asList("ticket", "train", "seat", "stop", "user").forEach(this::clearTable);
         jFactory.getDataRepository().clear();
+        if (fakeCurrentTimeProvider != null) {
+            fakeCurrentTimeProvider.reset();
+        }
     }
 
     @Transactional

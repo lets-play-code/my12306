@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -27,5 +28,7 @@ public class Stop {
     private Train train;
 
     private String name;
+
+    private LocalDateTime departureTime;
 
 }

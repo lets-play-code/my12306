@@ -20,20 +20,20 @@ INSERT INTO train (name) VALUES ('G102');
 INSERT INTO train (name) VALUES ('G103');
 
 -- Stops for G102: 北京南 -> 南京南 -> 镇江 -> 上海虹桥
-INSERT INTO stop (name, `order`, train_id)
-SELECT '北京南', 1, t.id FROM train t WHERE t.name = 'G102';
-INSERT INTO stop (name, `order`, train_id)
-SELECT '南京南', 2, t.id FROM train t WHERE t.name = 'G102';
-INSERT INTO stop (name, `order`, train_id)
-SELECT '镇江', 3, t.id FROM train t WHERE t.name = 'G102';
-INSERT INTO stop (name, `order`, train_id)
-SELECT '上海虹桥', 4, t.id FROM train t WHERE t.name = 'G102';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '北京南', 1, t.id, '2026-03-21 08:00:00' FROM train t WHERE t.name = 'G102';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '南京南', 2, t.id, '2026-03-21 09:30:00' FROM train t WHERE t.name = 'G102';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '镇江', 3, t.id, '2026-03-21 10:00:00' FROM train t WHERE t.name = 'G102';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '上海虹桥', 4, t.id, '2026-03-21 11:00:00' FROM train t WHERE t.name = 'G102';
 
 -- Stops for G103: 上海虹桥 -> 北京南
-INSERT INTO stop (name, `order`, train_id)
-SELECT '上海虹桥', 1, t.id FROM train t WHERE t.name = 'G103';
-INSERT INTO stop (name, `order`, train_id)
-SELECT '北京南', 2, t.id FROM train t WHERE t.name = 'G103';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '上海虹桥', 1, t.id, '2026-03-21 14:00:00' FROM train t WHERE t.name = 'G103';
+INSERT INTO stop (name, `order`, train_id, departure_time)
+SELECT '北京南', 2, t.id, '2026-03-21 17:00:00' FROM train t WHERE t.name = 'G103';
 
 -- Seats for G102
 INSERT INTO seat (name, train_id)
