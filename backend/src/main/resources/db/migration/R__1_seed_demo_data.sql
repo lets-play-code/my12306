@@ -41,3 +41,9 @@ INSERT INTO seat (name, train_id)
 SELECT '2D4', t.id FROM train t WHERE t.name = 'G103';
 
 -- No tickets seeded by default so that all seats are initially available for manual testing.
+
+-- Seed test users (V2 creates the table, this adds initial data)
+DELETE FROM `user` WHERE username IN ('alice', 'bob');
+INSERT INTO `user` (username, password, full_name) VALUES
+    ('alice', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Alice Wang'),
+    ('bob', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Bob Chen');
