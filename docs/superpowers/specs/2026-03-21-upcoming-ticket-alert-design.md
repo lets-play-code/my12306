@@ -43,7 +43,52 @@ CREATE TABLE user (
 );
 ```
 
-### 2. 后端 API
+### 2. 认证体系
+
+#### 登录 API
+**POST /api/sessions**
+
+请求体：
+```json
+{
+  "username": "alice",
+  "password": "password123"
+}
+```
+
+成功响应（200）：
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "fullName": "Alice Wang"
+}
+```
+
+失败响应（401）：
+```json
+{
+  "message": "用户名或密码错误"
+}
+```
+
+#### 认证机制
+- 使用 **JWT Token** 认证
+- 后端生成 Token，包含用户 ID
+- 前端将 Token 存储在 `localStorage`
+- 后续请求在 Header 中传递：`Authorization: Bearer <token>`
+- Token 有效期：24小时
+
+#### 获取当前用户
+**GET /api/sessions/current**
+
+响应：
+```json
+{
+  "fullName": "Alice Wang"
+}
+```
+
+### 4. 后端 API
 
 #### GET /api/tickets/my
 获取当前用户的所有已购票列表。
@@ -99,7 +144,7 @@ CREATE TABLE user (
 }
 ```
 
-### 3. 前端提醒组件
+### 5. 前端提醒组件
 
 #### 警告横幅组件
 - 位置：火车查询页面（Index.vue）顶部
@@ -117,7 +162,7 @@ CREATE TABLE user (
 - 如果返回列表非空，显示警告横幅
 - 如果为空，不显示任何内容
 
-### 4. 购票流程调整
+### 6. 购票流程调整
 
 #### 日期选择器
 - 在购票按钮旁增加日期选择器
@@ -133,30 +178,43 @@ CREATE TABLE user (
 ### 后端
 
 1. **新增 User 实体和 UserRepo**
-2. **Train 实体新增 departureTime 字段**
-3. **Ticket 实体新增 user 和 travelDate 字段**
-4. **新建 TicketController 处理相关 API**
-5. **TicketRepo 新增按用户查询和按时间范围查询方法**
-6. **修改 TrainsController.buyTicket 接收 travelDate 参数**
+2. **添加 JWT 依赖**（如 jjwt）
+3. **新建 AuthController 处理登录和 Token 验证**
+4. **新建 SessionController 处理获取当前用户**
+5. **Train 实体新增 departureTime 字段**
+6. **Ticket 实体新增 user 和 travelDate 字段**
+7. **新建 TicketController 处理相关 API**
+8. **TicketRepo 新增按用户查询和按时间范围查询方法**
+9. **修改 TrainsController.buyTicket 接收 travelDate 参数**
+10. **添加全局拦截器验证 Token**
 
 ### 前端
 
 1. **新增 User 类型定义**
-2. **新增 tickets API 服务**
-3. **在 Index.vue 中调用 `/api/tickets/upcoming` 获取数据**
-4. **添加 el-alert 组件显示警告横幅**
-5. **购票表单增加日期选择器**
+2. **更新 authenticationService 使用 JWT Token**
+3. **新增 tickets API 服务**
+4. **在 Index.vue 中调用 `/api/tickets/upcoming` 获取数据**
+5. **添加 el-alert 组件显示警告横幅**
+6. **购票表单增加日期选择器**
+7. **拦截 401 响应，跳转登录页**
 
 ## 测试要点
 
-1. 用户未登录时，访问页面不显示提醒
-2. 用户已登录但无已购票，不显示提醒
-3. 已购票发车时间在3小时外，不显示提醒
-4. 已购票发车时间在3小时内，显示红色警告横幅
-5. 关闭横幅后，刷新页面重新显示
-6. 购票成功后，需要选择出发日期
+### 认证相关
+1. 正确用户名密码登录成功，获取 Token
+2. 错误密码登录失败，提示"用户名或密码错误"
+3. Token 过期或无效时，访问 API 返回 401
+4. 登录状态持久化（刷新页面保持登录）
+
+### 提醒相关
+5. 用户未登录时，访问页面不显示提醒
+6. 用户已登录但无已购票，不显示提醒
+7. 已购票发车时间在3小时外，不显示提醒
+8. 已购票发车时间在3小时内，显示红色警告横幅
+9. 关闭横幅后，刷新页面重新显示
+10. 购票成功后，需要选择出发日期
 
 ## 优先级
 
-1. **Phase 1（基础）**: 新增用户体系 + 数据模型变更 + 已购票 API
+1. **Phase 1（基础）**: 用户认证 + 用户体系 + 数据模型变更 + 已购票 API
 2. **Phase 2（提醒）**: 前端警告横幅 + 购票日期选择
