@@ -95,10 +95,11 @@ INSERT INTO `user` (username, password, full_name) VALUES
 在 `R__1_seed_demo_data.sql` 末尾添加：
 ```sql
 -- 清理并插入测试用户（如果不存在）
+-- BCrypt 哈希值对应明文 "password123"
 DELETE FROM `user` WHERE username IN ('alice', 'bob');
 INSERT INTO `user` (username, password, full_name) VALUES 
-    ('alice', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alice Wang'),
-    ('bob', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Bob Chen');
+    ('alice', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Alice Wang'),
+    ('bob', '$2a$10$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36ZfPIlwiNJDt0e2p6qGmQe', 'Bob Chen');
 ```
 
 - [ ] **Step 3: 提交**
@@ -480,7 +481,7 @@ public class AuthController {
 }
 ```
 
-> 需要在 build.gradle 添加 spring-security-crypto 依赖
+> 注意：`BadRequestException` 和 `GlobalExceptionHandler` 已存在于项目中，会自动将异常转换为 JSON 响应
 
 - [ ] **Step 2: 添加密码编码器依赖**
 
