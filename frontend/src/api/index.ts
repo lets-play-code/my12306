@@ -17,7 +17,11 @@ instance.interceptors.response.use(
     error => {
         if (error.response?.status === 401) {
             authentication.clearToken();
-            showMessage('You have been logged out. Please login again.');
+            // 如果不是登录页面，跳转到登录
+            if (!window.location.pathname.includes('/login')) {
+                showMessage('登录已过期，请重新登录');
+                window.location.href = '/login';
+            }
         }
         return Promise.reject(error);
     }
